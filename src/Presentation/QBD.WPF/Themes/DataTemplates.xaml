@@ -1,0 +1,416 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- ============ HOME PAGE TEMPLATE ============ -->
+    <DataTemplate x:Key="HomePageTemplate">
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Background="#F5F5F5">
+            <Grid Margin="20">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- Header -->
+                <Border Grid.Row="0" Background="#1565C0" CornerRadius="4" Padding="16,10" Margin="0,0,0,16">
+                    <TextBlock Text="QuickBooks Desktop - Home Page"
+                               Foreground="White" FontSize="20" FontWeight="Bold"/>
+                </Border>
+
+                <!-- Workflow Sections -->
+                <Grid Grid.Row="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- VENDORS Section -->
+                    <GroupBox Grid.Row="0" Header="VENDORS" Margin="0,0,0,12"
+                              BorderBrush="#1565C0" FontWeight="Bold">
+                        <WrapPanel Margin="8">
+                            <Button Content="&#x1F4CB; Purchase Orders" Command="{Binding NavigateToFormCommand}"
+                                    CommandParameter="PurchaseOrder" Style="{StaticResource HomeIconButton}" Margin="4"/>
+                            <TextBlock Text=" &#x2192; " VerticalAlignment="Center" FontSize="20" Foreground="#888"/>
+                            <Button Content="&#x1F4E5; Receive Inventory" IsEnabled="False"
+                                    Style="{StaticResource HomeIconButton}" Margin="4"/>
+                            <TextBlock Text=" &#x2192; " VerticalAlignment="Center" FontSize="20" Foreground="#888"/>
+                            <Button Content="&#x1F4C4; Enter Bills" Command="{Binding NavigateToFormCommand}"
+                                    CommandParameter="Bill" Style="{StaticResource HomeIconButton}" Margin="4"/>
+                            <TextBlock Text=" &#x2192; " VerticalAlignment="Center" FontSize="20" Foreground="#888"/>
+                            <Button Content="&#x1F4B3; Pay Bills" Command="{Binding NavigateToFormCommand}"
+                                    CommandParameter="PayBills" Style="{StaticResource HomeIconButton}" Margin="4"/>
+                        </WrapPanel>
+                    </GroupBox>
+
+                    <!-- CUSTOMERS Section -->
+                    <GroupBox Grid.Row="1" Header="CUSTOMERS" Margin="0,0,0,12"
+                              BorderBrush="#1565C0" FontWeight="Bold">
+                        <WrapPanel Margin="8">
+                            <Button Content="&#x1F4DD; Estimates" Command="{Binding NavigateToFormCommand}"
+                                    CommandParameter="Estimate" Style="{StaticResource HomeIconButton}" Margin="4"/>
+                            <TextBlock Text=" &#x2192; " VerticalAlignment="Center" FontSize="20" Foreground="#888"/>
+                            <Button Content="&#x1F4C3; Create Invoices" Command="{Binding NavigateToFormCommand}"
+                                    CommandParameter="Invoice" Style="{StaticResource HomeIconButton}" Margin="4"/>
+                            <TextBlock Text=" &#x2192; " VerticalAlignment="Center" FontSize="20" Foreground="#888"/>
+                            <Button Content="&#x1F4B0; Receive Payments" Command="{Binding NavigateToFormCommand}"
+                                    CommandParameter="ReceivePayment" Style="{StaticResource HomeIconButton}" Margin="4"/>
+                            <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" Margin="12,0"/>
+                            <Button Content="&#x1F9FE; Sales Receipts" Command="{Binding NavigateToFormCommand}"
+                                    CommandParameter="SalesReceipt" Style="{StaticResource HomeIconButton}" Margin="4"/>
+                        </WrapPanel>
+                    </GroupBox>
+
+                    <!-- EMPLOYEES Section (Grayed out Phase 1) -->
+                    <GroupBox Grid.Row="2" Header="EMPLOYEES" Margin="0,0,0,12"
+                              BorderBrush="#999" FontWeight="Bold" IsEnabled="False">
+                        <WrapPanel Margin="8">
+                            <Button Content="&#x23F1; Enter Time" Style="{StaticResource HomeIconButton}" Margin="4"/>
+                            <TextBlock Text=" &#x2192; " VerticalAlignment="Center" FontSize="20" Foreground="#888"/>
+                            <Button Content="&#x1F4B5; Pay Employees" Style="{StaticResource HomeIconButton}" Margin="4"/>
+                            <TextBlock Text=" &#x2192; " VerticalAlignment="Center" FontSize="20" Foreground="#888"/>
+                            <Button Content="&#x1F3E6; Pay Liabilities" Style="{StaticResource HomeIconButton}" Margin="4"/>
+                        </WrapPanel>
+                    </GroupBox>
+
+                    <!-- BANKING Section -->
+                    <GroupBox Grid.Row="3" Header="BANKING" Margin="0,0,0,12"
+                              BorderBrush="#1565C0" FontWeight="Bold">
+                        <WrapPanel Margin="8">
+                            <Button Content="&#x1F3E6; Record Deposits" Command="{Binding NavigateToFormCommand}"
+                                    CommandParameter="Deposit" Style="{StaticResource HomeIconButton}" Margin="4"/>
+                            <Button Content="&#x2696; Reconcile" Command="{Binding NavigateToFormCommand}"
+                                    CommandParameter="Reconcile" Style="{StaticResource HomeIconButton}" Margin="4"/>
+                            <Button Content="&#x270D; Write Checks" Command="{Binding NavigateToFormCommand}"
+                                    CommandParameter="Check" Style="{StaticResource HomeIconButton}" Margin="4"/>
+                            <Button Content="&#x1F5A8; Print Checks" IsEnabled="False"
+                                    Style="{StaticResource HomeIconButton}" Margin="4"/>
+                        </WrapPanel>
+                    </GroupBox>
+
+                    <!-- COMPANY Section -->
+                    <GroupBox Grid.Row="4" Header="COMPANY" Margin="0,0,0,12"
+                              BorderBrush="#1565C0" FontWeight="Bold">
+                        <WrapPanel Margin="8">
+                            <Button Content="&#x1F4CA; Chart of Accounts" Command="{Binding NavigateToListCommand}"
+                                    CommandParameter="ChartOfAccounts" Style="{StaticResource HomeIconButton}" Margin="4"/>
+                            <Button Content="&#x1F4E6; Items &amp; Services" Command="{Binding NavigateToListCommand}"
+                                    CommandParameter="Items" Style="{StaticResource HomeIconButton}" Margin="4"/>
+                        </WrapPanel>
+                    </GroupBox>
+                </Grid>
+            </Grid>
+        </ScrollViewer>
+    </DataTemplate>
+
+    <!-- ============ CENTER TEMPLATE (3-Panel) ============ -->
+    <DataTemplate x:Key="CenterTemplate">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="280" MinWidth="200"/>
+                <ColumnDefinition Width="5"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Left Panel: Entity List -->
+            <DockPanel Grid.Column="0" Background="#FAFAFA">
+                <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="8">
+                    <TextBox Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}"
+                             Width="160" Margin="0,0,4,0" VerticalContentAlignment="Center"/>
+                    <Button Content="Search" Command="{Binding FilterCommand}" Padding="8,2"/>
+                </StackPanel>
+                <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="8,4">
+                    <Button Content="New" Command="{Binding NewEntityCommand}" Padding="8,2" Margin="0,0,4,0"/>
+                    <Button Content="Edit" Command="{Binding EditEntityCommand}" Padding="8,2"/>
+                </StackPanel>
+                <ListBox ItemsSource="{Binding EntityList}"
+                         SelectedItem="{Binding SelectedEntity}"
+                         DisplayMemberPath="DisplayName"
+                         Margin="4" BorderThickness="1" BorderBrush="#CCC"/>
+            </DockPanel>
+
+            <!-- Splitter -->
+            <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" Background="#DDD"/>
+
+            <!-- Right Panel: Detail + Transactions -->
+            <Grid Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" MinHeight="100"/>
+                    <RowDefinition Height="5"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- Entity Detail Card -->
+                <Border Grid.Row="0" Background="White" BorderBrush="#CCC" BorderThickness="1" Margin="4" Padding="12">
+                    <ContentPresenter Content="{Binding EntityDetail}"/>
+                </Border>
+
+                <GridSplitter Grid.Row="1" Height="5" HorizontalAlignment="Stretch" Background="#DDD"/>
+
+                <!-- Transaction History -->
+                <DockPanel Grid.Row="2" Margin="4">
+                    <TextBlock DockPanel.Dock="Top" Text="Transactions" FontWeight="Bold" Margin="0,0,0,4"/>
+                    <DataGrid ItemsSource="{Binding Transactions}"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="True"
+                              CanUserSortColumns="True"
+                              GridLinesVisibility="Horizontal"
+                              AlternatingRowBackground="#F8F8F8"
+                              HeadersVisibility="Column"
+                              BorderBrush="#CCC">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Type" Binding="{Binding TypeDisplay}" Width="100"/>
+                            <DataGridTextColumn Header="Number" Binding="{Binding Number}" Width="100"/>
+                            <DataGridTextColumn Header="Date" Binding="{Binding Date, StringFormat=d}" Width="100"/>
+                            <DataGridTextColumn Header="Amount" Binding="{Binding Amount, StringFormat=C}" Width="100">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="TextAlignment" Value="Right"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Balance" Binding="{Binding Balance, StringFormat=C}" Width="100">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="TextAlignment" Value="Right"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="80"/>
+                            <DataGridTextColumn Header="Memo" Binding="{Binding Memo}" Width="*"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </DockPanel>
+            </Grid>
+        </Grid>
+    </DataTemplate>
+
+    <!-- ============ TRANSACTION FORM TEMPLATE ============ -->
+    <DataTemplate x:Key="TransactionFormTemplate">
+        <DockPanel Margin="8">
+            <!-- Header Area -->
+            <Border DockPanel.Dock="Top" Background="White" BorderBrush="#CCC" BorderThickness="1" Padding="12" Margin="0,0,0,8">
+                <ContentPresenter Content="{Binding Header}"/>
+            </Border>
+
+            <!-- Footer: Totals + Actions -->
+            <Border DockPanel.Dock="Bottom" Background="#F5F5F5" BorderBrush="#CCC" BorderThickness="1" Padding="12" Margin="0,8,0,0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Action Buttons -->
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                        <Button Content="Save" Command="{Binding SaveCommand}" Padding="16,6" Margin="0,0,8,0"
+                                Background="#1565C0" Foreground="White" FontWeight="Bold"/>
+                        <Button Content="Save &amp; Post" Command="{Binding SaveAndPostCommand}" Padding="16,6" Margin="0,0,8,0"/>
+                        <Button Content="Clear" Command="{Binding ClearCommand}" Padding="16,6" Margin="0,0,8,0"/>
+                        <Button Content="Void" Command="{Binding VoidCommand}" Padding="16,6" Margin="0,0,8,0"
+                                Foreground="Red"/>
+                        <Button Content="Print" Command="{Binding PrintCommand}" Padding="16,6"/>
+                    </StackPanel>
+
+                    <!-- Totals -->
+                    <StackPanel Grid.Column="1" HorizontalAlignment="Right" MinWidth="200">
+                        <DockPanel Margin="0,2">
+                            <TextBlock Text="Subtotal:" DockPanel.Dock="Left"/>
+                            <TextBlock Text="{Binding SubTotal, StringFormat=C}" TextAlignment="Right" FontWeight="Bold"/>
+                        </DockPanel>
+                        <DockPanel Margin="0,2">
+                            <TextBlock Text="Tax:" DockPanel.Dock="Left"/>
+                            <TextBlock Text="{Binding TaxTotal, StringFormat=C}" TextAlignment="Right"/>
+                        </DockPanel>
+                        <Separator Margin="0,4"/>
+                        <DockPanel Margin="0,2">
+                            <TextBlock Text="Total:" DockPanel.Dock="Left" FontWeight="Bold" FontSize="14"/>
+                            <TextBlock Text="{Binding GrandTotal, StringFormat=C}" TextAlignment="Right" FontWeight="Bold" FontSize="14"/>
+                        </DockPanel>
+                        <DockPanel Margin="0,2">
+                            <TextBlock Text="Balance Due:" DockPanel.Dock="Left" FontWeight="Bold" Foreground="#C62828"/>
+                            <TextBlock Text="{Binding BalanceDue, StringFormat=C}" TextAlignment="Right" FontWeight="Bold" Foreground="#C62828"/>
+                        </DockPanel>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Line Items Grid -->
+            <DockPanel>
+                <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,4">
+                    <Button Content="Add Line" Command="{Binding AddLineCommand}" Padding="8,2" Margin="0,0,4,0"/>
+                </StackPanel>
+                <DataGrid ItemsSource="{Binding Lines}"
+                          AutoGenerateColumns="True"
+                          CanUserAddRows="True"
+                          CanUserDeleteRows="True"
+                          GridLinesVisibility="All"
+                          AlternatingRowBackground="#F8F8F8"
+                          HeadersVisibility="Column"
+                          BorderBrush="#CCC"/>
+            </DockPanel>
+        </DockPanel>
+    </DataTemplate>
+
+    <!-- ============ REGISTER TEMPLATE ============ -->
+    <DataTemplate x:Key="RegisterTemplate">
+        <DockPanel Margin="8">
+            <!-- Header -->
+            <Border DockPanel.Dock="Top" Background="White" BorderBrush="#CCC" BorderThickness="1" Padding="8" Margin="0,0,0,8">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Account: " FontWeight="Bold" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding AccountName}" FontWeight="Bold" FontSize="14" VerticalAlignment="Center" Margin="0,0,16,0"/>
+                    <TextBlock Text="From:" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                    <DatePicker SelectedDate="{Binding FromDate}" Width="120" Margin="0,0,8,0"/>
+                    <TextBlock Text="To:" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                    <DatePicker SelectedDate="{Binding ToDate}" Width="120" Margin="0,0,8,0"/>
+                    <Button Content="Refresh" Command="{Binding LoadEntriesCommand}" Padding="8,2"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Ending Balance -->
+            <Border DockPanel.Dock="Bottom" Background="#E8F5E9" Padding="8" Margin="0,8,0,0">
+                <TextBlock FontWeight="Bold" FontSize="14">
+                    <Run Text="Ending Balance: "/>
+                    <Run Text="{Binding EndingBalance, StringFormat=C, Mode=OneWay}"/>
+                </TextBlock>
+            </Border>
+
+            <!-- Register Grid -->
+            <DataGrid ItemsSource="{Binding Entries}"
+                      AutoGenerateColumns="False"
+                      IsReadOnly="True"
+                      CanUserSortColumns="True"
+                      GridLinesVisibility="All"
+                      AlternatingRowBackground="#F8F8F8"
+                      HeadersVisibility="Column"
+                      BorderBrush="#CCC">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Date" Binding="{Binding Date, StringFormat=d}" Width="90"/>
+                    <DataGridTextColumn Header="Type" Binding="{Binding TransactionType}" Width="90"/>
+                    <DataGridTextColumn Header="Number" Binding="{Binding Number}" Width="80"/>
+                    <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="150"/>
+                    <DataGridTextColumn Header="Memo" Binding="{Binding Memo}" Width="*"/>
+                    <DataGridTextColumn Header="Debit" Binding="{Binding Debit, StringFormat=N2}" Width="100">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock"><Setter Property="TextAlignment" Value="Right"/></Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Header="Credit" Binding="{Binding Credit, StringFormat=N2}" Width="100">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock"><Setter Property="TextAlignment" Value="Right"/></Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Header="Balance" Binding="{Binding RunningBalance, StringFormat=N2}" Width="110">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock"><Setter Property="TextAlignment" Value="Right" /><Setter Property="FontWeight" Value="Bold"/></Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <DataGridCheckBoxColumn Header="Clr" Binding="{Binding IsCleared}" Width="40"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </DockPanel>
+    </DataTemplate>
+
+    <!-- ============ LIST TEMPLATE ============ -->
+    <DataTemplate x:Key="ListTemplate">
+        <DockPanel Margin="8">
+            <!-- Toolbar -->
+            <Border DockPanel.Dock="Top" Background="White" BorderBrush="#CCC" BorderThickness="1" Padding="8" Margin="0,0,0,8">
+                <StackPanel Orientation="Horizontal">
+                    <Button Content="New" Command="{Binding NewItemCommand}" Padding="8,2" Margin="0,0,4,0"/>
+                    <Button Content="Edit" Command="{Binding EditItemCommand}"
+                            CommandParameter="{Binding SelectedItem}" Padding="8,2" Margin="0,0,4,0"/>
+                    <Button Content="Delete" Command="{Binding DeleteItemCommand}"
+                            CommandParameter="{Binding SelectedItem}" Padding="8,2" Margin="0,0,16,0" Foreground="Red"/>
+                    <TextBox Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" Width="200" Margin="0,0,4,0"
+                             VerticalContentAlignment="Center"/>
+                    <Button Content="Search" Command="{Binding SearchCommand}" Padding="8,2"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Pagination -->
+            <Border DockPanel.Dock="Bottom" Background="#F5F5F5" Padding="8" Margin="0,8,0,0">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Button Content="&lt; Previous" Command="{Binding PreviousPageCommand}" Padding="8,2" Margin="0,0,8,0"/>
+                    <TextBlock VerticalAlignment="Center">
+                        <Run Text="Page "/>
+                        <Run Text="{Binding CurrentPage, Mode=OneWay}"/>
+                        <Run Text=" | "/>
+                        <Run Text="{Binding TotalRecords, Mode=OneWay}"/>
+                        <Run Text=" records"/>
+                    </TextBlock>
+                    <Button Content="Next &gt;" Command="{Binding NextPageCommand}" Padding="8,2" Margin="8,0,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Data Grid -->
+            <DataGrid ItemsSource="{Binding Items}"
+                      SelectedItem="{Binding SelectedItem}"
+                      AutoGenerateColumns="True"
+                      IsReadOnly="True"
+                      CanUserSortColumns="True"
+                      GridLinesVisibility="Horizontal"
+                      AlternatingRowBackground="#F8F8F8"
+                      HeadersVisibility="Column"
+                      BorderBrush="#CCC"/>
+        </DockPanel>
+    </DataTemplate>
+
+    <!-- ============ REPORT TEMPLATE ============ -->
+    <DataTemplate x:Key="ReportTemplate">
+        <DockPanel Margin="8">
+            <!-- Report Filter Bar -->
+            <Border DockPanel.Dock="Top" Background="White" BorderBrush="#CCC" BorderThickness="1" Padding="8" Margin="0,0,0,8">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Dates:" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                    <ComboBox Width="140" Margin="0,0,8,0" SelectedItem="{Binding DateRange}">
+                        <ComboBoxItem Content="This Month"/>
+                        <ComboBoxItem Content="This Quarter"/>
+                        <ComboBoxItem Content="This Fiscal Year"/>
+                        <ComboBoxItem Content="Last Month"/>
+                        <ComboBoxItem Content="Last Fiscal Year"/>
+                        <ComboBoxItem Content="Custom"/>
+                    </ComboBox>
+                    <TextBlock Text="From:" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                    <DatePicker SelectedDate="{Binding FromDate}" Width="120" Margin="0,0,8,0"/>
+                    <TextBlock Text="To:" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                    <DatePicker SelectedDate="{Binding ToDate}" Width="120" Margin="0,0,8,0"/>
+                    <TextBlock Text="Basis:" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                    <ComboBox Width="100" SelectedItem="{Binding ReportBasis}" Margin="0,0,8,0">
+                        <ComboBoxItem Content="Accrual"/>
+                        <ComboBoxItem Content="Cash"/>
+                    </ComboBox>
+                    <Button Content="Run Report" Command="{Binding GenerateReportCommand}"
+                            Padding="12,4" Background="#1565C0" Foreground="White" FontWeight="Bold" Margin="0,0,4,0"/>
+                    <Button Content="Export PDF" Command="{Binding ExportToPdfCommand}" Padding="8,4" Margin="0,0,4,0"/>
+                    <Button Content="Export Excel" Command="{Binding ExportToExcelCommand}" Padding="8,4" Margin="0,0,4,0"/>
+                    <Button Content="Print" Command="{Binding PrintCommand}" Padding="8,4"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Report Data -->
+            <DataGrid ItemsSource="{Binding Data}"
+                      AutoGenerateColumns="True"
+                      IsReadOnly="True"
+                      CanUserSortColumns="True"
+                      GridLinesVisibility="Horizontal"
+                      AlternatingRowBackground="#F8F8F8"
+                      HeadersVisibility="Column"
+                      BorderBrush="#CCC"
+                      FontFamily="Consolas"/>
+        </DockPanel>
+    </DataTemplate>
+
+    <!-- ============ DEFAULT TEMPLATE ============ -->
+    <DataTemplate x:Key="DefaultTemplate">
+        <Border Background="White" Padding="20">
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                <TextBlock Text="{Binding Title}" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center"/>
+                <TextBlock Text="Content not available" Foreground="#888" HorizontalAlignment="Center" Margin="0,8"/>
+            </StackPanel>
+        </Border>
+    </DataTemplate>
+
+</ResourceDictionary>

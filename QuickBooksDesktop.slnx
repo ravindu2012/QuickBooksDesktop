@@ -1,0 +1,26 @@
+<Solution>
+  <Folder Name="/src/" />
+  <Folder Name="/src/Core/">
+    <Project Path="src/Core/QBD.Application/QBD.Application.csproj" />
+    <Project Path="src/Core/QBD.Domain/QBD.Domain.csproj" />
+  </Folder>
+  <Folder Name="/src/Infrastructure/">
+    <Project Path="src/Infrastructure/QBD.Infrastructure/QBD.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/src/Presentation/">
+    <Project Path="src/Presentation/QBD.WPF/QBD.WPF.csproj" />
+  </Folder>
+  <Folder Name="/src/Presentation/Modules/">
+    <Project Path="src/Presentation/Modules/QBD.Modules.Banking/QBD.Modules.Banking.csproj" />
+    <Project Path="src/Presentation/Modules/QBD.Modules.Company/QBD.Modules.Company.csproj" />
+    <Project Path="src/Presentation/Modules/QBD.Modules.Customers/QBD.Modules.Customers.csproj" />
+    <Project Path="src/Presentation/Modules/QBD.Modules.Employees/QBD.Modules.Employees.csproj" />
+    <Project Path="src/Presentation/Modules/QBD.Modules.Inventory/QBD.Modules.Inventory.csproj" />
+    <Project Path="src/Presentation/Modules/QBD.Modules.Reports/QBD.Modules.Reports.csproj" />
+    <Project Path="src/Presentation/Modules/QBD.Modules.Vendors/QBD.Modules.Vendors.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/QBD.Domain.Tests/QBD.Domain.Tests.csproj" />
+    <Project Path="tests/QBD.IntegrationTests/QBD.IntegrationTests.csproj" />
+  </Folder>
+</Solution>
