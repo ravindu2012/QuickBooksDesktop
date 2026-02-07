@@ -1,0 +1,207 @@
+<Window x:Class="QBD.WPF.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:QBD.WPF.Controls"
+        Title="QuickBooks Desktop Enterprise"
+        Width="1280" Height="800"
+        WindowStartupLocation="CenterScreen"
+        WindowState="Maximized"
+        Background="#F0F0F0">
+    <Window.Resources>
+        <controls:ViewModelTemplateSelector x:Key="ViewModelTemplateSelector"/>
+    </Window.Resources>
+
+    <DockPanel LastChildFill="True">
+        <!-- Menu Bar -->
+        <Menu DockPanel.Dock="Top" Background="#F0F0F0" Padding="2">
+            <MenuItem Header="_File">
+                <MenuItem Header="New Company..." />
+                <MenuItem Header="Open Company..." />
+                <Separator/>
+                <MenuItem Header="Close Company" />
+                <Separator/>
+                <MenuItem Header="E_xit" Click="Exit_Click"/>
+            </MenuItem>
+            <MenuItem Header="_Edit">
+                <MenuItem Header="Undo" InputGestureText="Ctrl+Z"/>
+                <MenuItem Header="Cut" InputGestureText="Ctrl+X"/>
+                <MenuItem Header="Copy" InputGestureText="Ctrl+C"/>
+                <MenuItem Header="Paste" InputGestureText="Ctrl+V"/>
+            </MenuItem>
+            <MenuItem Header="_View">
+                <MenuItem Header="Home Page" Click="HomePage_Click"/>
+                <Separator/>
+                <MenuItem Header="Open Window List" />
+            </MenuItem>
+            <MenuItem Header="_Lists">
+                <MenuItem Header="Chart of Accounts" Click="ChartOfAccounts_Click" InputGestureText="Ctrl+A"/>
+                <MenuItem Header="Item List" Click="ItemList_Click"/>
+                <Separator/>
+                <MenuItem Header="Class List" Click="ClassList_Click"/>
+                <MenuItem Header="Customer &amp; Vendor Profile Lists">
+                    <MenuItem Header="Terms List" Click="TermsList_Click"/>
+                    <MenuItem Header="Payment Method List" Click="PaymentMethodList_Click"/>
+                </MenuItem>
+            </MenuItem>
+            <MenuItem Header="_Company">
+                <MenuItem Header="Company Information" Click="CompanyInfo_Click"/>
+                <MenuItem Header="Preferences" Click="Preferences_Click"/>
+                <Separator/>
+                <MenuItem Header="Set Up Users" />
+            </MenuItem>
+            <MenuItem Header="C_ustomers">
+                <MenuItem Header="Customer Center" Click="CustomerCenter_Click"/>
+                <Separator/>
+                <MenuItem Header="Create Invoices" Click="CreateInvoice_Click"/>
+                <MenuItem Header="Create Estimates" Click="CreateEstimate_Click"/>
+                <MenuItem Header="Enter Sales Receipts" Click="CreateSalesReceipt_Click"/>
+                <MenuItem Header="Create Credit Memos" Click="CreateCreditMemo_Click"/>
+                <Separator/>
+                <MenuItem Header="Receive Payments" Click="ReceivePayment_Click"/>
+            </MenuItem>
+            <MenuItem Header="_Vendors">
+                <MenuItem Header="Vendor Center" Click="VendorCenter_Click"/>
+                <Separator/>
+                <MenuItem Header="Enter Bills" Click="EnterBill_Click"/>
+                <MenuItem Header="Pay Bills" Click="PayBills_Click"/>
+                <MenuItem Header="Create Purchase Orders" Click="CreatePurchaseOrder_Click"/>
+                <Separator/>
+                <MenuItem Header="Enter Vendor Credits" Click="EnterVendorCredit_Click"/>
+            </MenuItem>
+            <MenuItem Header="_Employees">
+                <MenuItem Header="Employee Center" IsEnabled="False"/>
+                <Separator/>
+                <MenuItem Header="Pay Employees" IsEnabled="False"/>
+            </MenuItem>
+            <MenuItem Header="_Banking">
+                <MenuItem Header="Write Checks" Click="WriteChecks_Click"/>
+                <MenuItem Header="Make Deposits" Click="MakeDeposits_Click"/>
+                <MenuItem Header="Transfer Funds" Click="TransferFunds_Click"/>
+                <Separator/>
+                <MenuItem Header="Reconcile" Click="Reconcile_Click"/>
+                <Separator/>
+                <MenuItem Header="Use Register" Click="UseRegister_Click"/>
+            </MenuItem>
+            <MenuItem Header="_Reports">
+                <MenuItem Header="Report Center" Click="ReportCenter_Click"/>
+                <Separator/>
+                <MenuItem Header="Company &amp; Financial">
+                    <MenuItem Header="Profit &amp; Loss Standard" Click="ProfitLoss_Click"/>
+                    <MenuItem Header="Balance Sheet Standard" Click="BalanceSheet_Click"/>
+                    <MenuItem Header="Statement of Cash Flows" Click="CashFlows_Click"/>
+                    <MenuItem Header="Trial Balance" Click="TrialBalance_Click"/>
+                    <MenuItem Header="General Ledger" Click="GeneralLedger_Click"/>
+                </MenuItem>
+                <MenuItem Header="Customers &amp; Receivables">
+                    <MenuItem Header="A/R Aging Summary" Click="ARAgingSummary_Click"/>
+                    <MenuItem Header="A/R Aging Detail" Click="ARAgingDetail_Click"/>
+                    <MenuItem Header="Customer Balance Summary" Click="CustomerBalance_Click"/>
+                    <MenuItem Header="Open Invoices" Click="OpenInvoices_Click"/>
+                </MenuItem>
+                <MenuItem Header="Vendors &amp; Payables">
+                    <MenuItem Header="A/P Aging Summary" Click="APAgingSummary_Click"/>
+                    <MenuItem Header="A/P Aging Detail" Click="APAgingDetail_Click"/>
+                    <MenuItem Header="Vendor Balance Summary" Click="VendorBalance_Click"/>
+                    <MenuItem Header="Unpaid Bills Detail" Click="UnpaidBills_Click"/>
+                </MenuItem>
+                <MenuItem Header="Banking">
+                    <MenuItem Header="Deposit Detail" Click="DepositDetail_Click"/>
+                </MenuItem>
+                <MenuItem Header="Accountant &amp; Taxes">
+                    <MenuItem Header="Transaction List by Date" Click="TransactionListByDate_Click"/>
+                </MenuItem>
+            </MenuItem>
+            <MenuItem Header="_Window">
+                <MenuItem Header="Close All" Click="CloseAllTabs_Click"/>
+            </MenuItem>
+            <MenuItem Header="_Help">
+                <MenuItem Header="About QuickBooks Desktop" Click="About_Click"/>
+            </MenuItem>
+        </Menu>
+
+        <!-- Icon Toolbar -->
+        <ToolBarTray DockPanel.Dock="Top" Background="#E8E8E8">
+            <ToolBar Band="1" BandIndex="1" Background="#E8E8E8">
+                <Button Click="HomePage_Click" ToolTip="Home Page" Padding="8,4">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="&#x1F3E0;" FontSize="16" VerticalAlignment="Center"/>
+                        <TextBlock Text=" Home" VerticalAlignment="Center" Margin="4,0,0,0"/>
+                    </StackPanel>
+                </Button>
+                <Separator/>
+                <Button Click="CustomerCenter_Click" ToolTip="Customer Center" Padding="8,4">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="&#x1F464;" FontSize="16" VerticalAlignment="Center"/>
+                        <TextBlock Text=" Customers" VerticalAlignment="Center" Margin="4,0,0,0"/>
+                    </StackPanel>
+                </Button>
+                <Button Click="VendorCenter_Click" ToolTip="Vendor Center" Padding="8,4">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="&#x1F4E6;" FontSize="16" VerticalAlignment="Center"/>
+                        <TextBlock Text=" Vendors" VerticalAlignment="Center" Margin="4,0,0,0"/>
+                    </StackPanel>
+                </Button>
+                <Button IsEnabled="False" ToolTip="Employee Center" Padding="8,4">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="&#x1F465;" FontSize="16" VerticalAlignment="Center"/>
+                        <TextBlock Text=" Employees" VerticalAlignment="Center" Margin="4,0,0,0"/>
+                    </StackPanel>
+                </Button>
+                <Button Click="UseRegister_Click" ToolTip="Check Register" Padding="8,4">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="&#x1F3E6;" FontSize="16" VerticalAlignment="Center"/>
+                        <TextBlock Text=" Banking" VerticalAlignment="Center" Margin="4,0,0,0"/>
+                    </StackPanel>
+                </Button>
+                <Separator/>
+                <Button Click="ReportCenter_Click" ToolTip="Report Center" Padding="8,4">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="&#x1F4CA;" FontSize="16" VerticalAlignment="Center"/>
+                        <TextBlock Text=" Reports" VerticalAlignment="Center" Margin="4,0,0,0"/>
+                    </StackPanel>
+                </Button>
+            </ToolBar>
+        </ToolBarTray>
+
+        <!-- Status Bar -->
+        <StatusBar DockPanel.Dock="Bottom" Background="#E0E0E0" Padding="4,2">
+            <StatusBarItem>
+                <TextBlock x:Name="CompanyStatusText" Text="Company: My Company"/>
+            </StatusBarItem>
+            <Separator/>
+            <StatusBarItem>
+                <TextBlock x:Name="UserStatusText" Text="User: Admin"/>
+            </StatusBarItem>
+            <Separator/>
+            <StatusBarItem>
+                <TextBlock x:Name="FiscalYearStatusText" Text="FY: 2026"/>
+            </StatusBarItem>
+            <StatusBarItem HorizontalAlignment="Right">
+                <TextBlock x:Name="StatusText" Text="Ready"/>
+            </StatusBarItem>
+        </StatusBar>
+
+        <!-- MDI Tab Workspace -->
+        <TabControl x:Name="WorkspaceTabs"
+                    Background="White"
+                    Padding="0"
+                    ContentTemplateSelector="{StaticResource ViewModelTemplateSelector}">
+            <TabControl.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding Title}" VerticalAlignment="Center"/>
+                        <Button Content="X"
+                                Click="CloseTab_Click"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                Padding="4,0"
+                                Margin="8,0,0,0"
+                                FontSize="10"
+                                VerticalAlignment="Center"
+                                Cursor="Hand"/>
+                    </StackPanel>
+                </DataTemplate>
+            </TabControl.ItemTemplate>
+        </TabControl>
+    </DockPanel>
+</Window>
