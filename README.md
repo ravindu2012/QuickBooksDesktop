@@ -9,6 +9,7 @@ Inspired by QuickBooks Desktop Enterprise. Built for small and medium businesses
 [![.NET](https://img.shields.io/badge/.NET-8.0-purple)](https://dotnet.microsoft.com)
 [![WPF](https://img.shields.io/badge/WPF-Desktop-blue)](https://learn.microsoft.com/en-us/dotnet/desktop/wpf/)
 [![Status](https://img.shields.io/badge/Status-In%20Development-orange)]()
+[![Sponsor](https://img.shields.io/badge/Sponsor-%E2%9D%A4-red)](https://github.com/sponsors/ravindu2012) [![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-FFDD00?logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/ravindu2012)
 
 </div>
 
