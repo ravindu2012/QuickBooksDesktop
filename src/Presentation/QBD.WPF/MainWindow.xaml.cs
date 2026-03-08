@@ -121,6 +121,11 @@ public partial class MainWindow : Window
         var app = (App)System.Windows.Application.Current;
         app.ChangeTheme(_isDarkMode);
 
-        System.IO.File.WriteAllText(_themeConfigFile, _isDarkMode.ToString());
+        try
+        {
+            System.IO.File.WriteAllText(_themeConfigFile, _isDarkMode.ToString());
+        }
+        catch (System.IO.IOException) { }
+        catch (System.UnauthorizedAccessException) { }
     }
 }
