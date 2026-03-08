@@ -1,6 +1,6 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    
+
     <Style TargetType="TextBlock">
         <Setter Property="Foreground" Value="{DynamicResource ThemeForeground}"/>
     </Style>
@@ -22,7 +22,7 @@
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             CornerRadius="4" Padding="{TemplateBinding Padding}">
-                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" TextElement.Foreground="{TemplateBinding Foreground}"/>
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
@@ -55,7 +55,7 @@
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             CornerRadius="3" Padding="{TemplateBinding Padding}">
-                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" TextElement.Foreground="{TemplateBinding Foreground}"/>
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
@@ -137,7 +137,8 @@
                                           VerticalAlignment="Center"
                                           HorizontalAlignment="Center"
                                           ContentSource="Header"
-                                          Margin="{TemplateBinding Padding}"/>
+                                          Margin="{TemplateBinding Padding}"
+                                          TextElement.Foreground="{TemplateBinding Foreground}"/>
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsSelected" Value="True">
@@ -309,7 +310,7 @@
                             </Grid.ColumnDefinitions>
                             
                             <ContentPresenter x:Name="Icon" ContentSource="Icon" Margin="4,0" VerticalAlignment="Center"/>
-                            <ContentPresenter Grid.Column="1" ContentSource="Header" Margin="{TemplateBinding Padding}" VerticalAlignment="Center" RecognizesAccessKey="True"/>
+                            <ContentPresenter Grid.Column="1" ContentSource="Header" Margin="{TemplateBinding Padding}" VerticalAlignment="Center" RecognizesAccessKey="True" TextElement.Foreground="{TemplateBinding Foreground}"/>
                             <TextBlock x:Name="Shortcut" Grid.Column="2" Text="{TemplateBinding InputGestureText}" Margin="15,0,10,0" VerticalAlignment="Center" Opacity="0.5"/>
                             <Path x:Name="RightArrow" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Center"
                                   Data="M 0 0 L 4 4 L 0 8 Z" Fill="{TemplateBinding Foreground}" Visibility="Collapsed"/>

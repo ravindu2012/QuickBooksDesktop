@@ -11,22 +11,23 @@ public partial class MainWindow : Window
 {
     private readonly INavigationService _navigationService;
     private bool _isDarkMode = false;
-    private readonly string _themeConfigFile;
+    private string _themeConfigFile;
 
     public MainWindow(INavigationService navigationService, HomePageViewModel homePageViewModel)
     {
         InitializeComponent();
         _navigationService = navigationService;
 
-        var appDataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "QBD", "QBD.WPF");
-        if (!Directory.Exists(appDataDirectory))
-        {
-            Directory.CreateDirectory(appDataDirectory);
-        }
-        _themeConfigFile = Path.Combine(appDataDirectory, "theme.cfg");
-
         try
         {
+            var appDataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "QBD", "QBD.WPF");
+            if (!Directory.Exists(appDataDirectory))
+            {
+                Directory.CreateDirectory(appDataDirectory);
+            }
+            
+            _themeConfigFile = Path.Combine(appDataDirectory, "theme.cfg");
+
             if (File.Exists(_themeConfigFile))
             {
                 var configContent = File.ReadAllText(_themeConfigFile);
@@ -40,10 +41,9 @@ public partial class MainWindow : Window
         }
         catch (Exception ex)
         {
-            System.Diagnostics.Debug.WriteLine($"Napaka pri branju teme: {ex.Message}");
+            System.Diagnostics.Debug.WriteLine($"Error reading theme configuration: {ex.Message}");
         }
 
-        // Open Home Page on startup
         OpenTab(homePageViewModel);
     }
 
@@ -72,7 +72,6 @@ public partial class MainWindow : Window
         WorkspaceTabs.Items.Clear();
     }
 
-    // Event handlers delegate to navigation service
     private void Exit_Click(object sender, RoutedEventArgs e) => System.Windows.Application.Current.Shutdown();
     private void HomePage_Click(object sender, RoutedEventArgs e) => _navigationService.OpenHomePage();
     private void ChartOfAccounts_Click(object sender, RoutedEventArgs e) => _navigationService.OpenList("ChartOfAccounts");
@@ -139,11 +138,14 @@ public partial class MainWindow : Window
 
         try
         {
-            File.WriteAllText(_themeConfigFile, _isDarkMode.ToString());
+            if (!string.IsNullOrEmpty(_themeConfigFile))
+            {
+                File.WriteAllText(_themeConfigFile, _isDarkMode.ToString());
+            }
         }
         catch (Exception ex)
         {
-            System.Diagnostics.Debug.WriteLine($"Napaka pri shranjevanju teme: {ex.Message}");
+            System.Diagnostics.Debug.WriteLine($"Error saving theme: {ex.Message}");
         }
     }
 }

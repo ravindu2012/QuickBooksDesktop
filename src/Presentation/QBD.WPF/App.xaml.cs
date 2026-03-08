@@ -136,7 +136,9 @@ public partial class App : System.Windows.Application
 
         var mergedDicts = System.Windows.Application.Current.Resources.MergedDictionaries;
         
-        var oldTheme = mergedDicts.FirstOrDefault(d => d.Source != null && d.Source.OriginalString.Contains("Colors.xaml"));
+        var oldTheme = mergedDicts.FirstOrDefault(d => d.Source != null && 
+            (d.Source.OriginalString.EndsWith("LightColors.xaml") || d.Source.OriginalString.EndsWith("DarkColors.xaml")));
+            
         if (oldTheme != null)
         {
             mergedDicts.Remove(oldTheme);
