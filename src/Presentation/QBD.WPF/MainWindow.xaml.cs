@@ -1,3 +1,5 @@
+using System;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using QBD.Application.Interfaces;
@@ -9,21 +11,36 @@ public partial class MainWindow : Window
 {
     private readonly INavigationService _navigationService;
     private bool _isDarkMode = false;
-    private readonly string _themeConfigFile = System.IO.Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "theme.cfg");
+    private readonly string _themeConfigFile;
 
     public MainWindow(INavigationService navigationService, HomePageViewModel homePageViewModel)
     {
         InitializeComponent();
         _navigationService = navigationService;
 
-        if (System.IO.File.Exists(_themeConfigFile))
+        var appDataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "QBD", "QBD.WPF");
+        if (!Directory.Exists(appDataDirectory))
         {
-            if (bool.TryParse(System.IO.File.ReadAllText(_themeConfigFile), out bool isDark))
+            Directory.CreateDirectory(appDataDirectory);
+        }
+        _themeConfigFile = Path.Combine(appDataDirectory, "theme.cfg");
+
+        try
+        {
+            if (File.Exists(_themeConfigFile))
             {
-                _isDarkMode = isDark;
-                var app = (App)System.Windows.Application.Current;
-                app.ChangeTheme(_isDarkMode);
+                var configContent = File.ReadAllText(_themeConfigFile);
+                if (bool.TryParse(configContent, out bool isDark))
+                {
+                    _isDarkMode = isDark;
+                    var app = (App)System.Windows.Application.Current;
+                    app.ChangeTheme(_isDarkMode);
+                }
             }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Napaka pri branju teme: {ex.Message}");
         }
 
         // Open Home Page on startup
@@ -32,7 +49,6 @@ public partial class MainWindow : Window
 
     public void OpenTab(ViewModelBase viewModel)
     {
-        // Check if tab already exists
         foreach (var item in WorkspaceTabs.Items)
         {
             if (item is ViewModelBase existing && existing.GetType() == viewModel.GetType()
@@ -123,9 +139,11 @@ public partial class MainWindow : Window
 
         try
         {
-            System.IO.File.WriteAllText(_themeConfigFile, _isDarkMode.ToString());
+            File.WriteAllText(_themeConfigFile, _isDarkMode.ToString());
         }
-        catch (System.IO.IOException) { }
-        catch (System.UnauthorizedAccessException) { }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Napaka pri shranjevanju teme: {ex.Message}");
+        }
     }
 }
