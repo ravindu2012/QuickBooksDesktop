@@ -9,11 +9,22 @@ public partial class MainWindow : Window
 {
     private readonly INavigationService _navigationService;
     private bool _isDarkMode = false;
+    private readonly string _themeConfigFile = System.IO.Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "theme.cfg");
 
     public MainWindow(INavigationService navigationService, HomePageViewModel homePageViewModel)
     {
         InitializeComponent();
         _navigationService = navigationService;
+
+        if (System.IO.File.Exists(_themeConfigFile))
+        {
+            if (bool.TryParse(System.IO.File.ReadAllText(_themeConfigFile), out bool isDark))
+            {
+                _isDarkMode = isDark;
+                var app = (App)System.Windows.Application.Current;
+                app.ChangeTheme(_isDarkMode);
+            }
+        }
 
         // Open Home Page on startup
         OpenTab(homePageViewModel);
@@ -109,5 +120,7 @@ public partial class MainWindow : Window
         _isDarkMode = !_isDarkMode;
         var app = (App)System.Windows.Application.Current;
         app.ChangeTheme(_isDarkMode);
+
+        System.IO.File.WriteAllText(_themeConfigFile, _isDarkMode.ToString());
     }
 }

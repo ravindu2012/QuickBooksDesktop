@@ -14,7 +14,7 @@
     <DockPanel LastChildFill="True">
         <!-- Menu Bar -->
         <Menu DockPanel.Dock="Top" 
-              Background="{DynamicResource ThemeWindowBackground}" 
+              Background="{DynamicResource ThemeMenuBackground}"
               Foreground="{DynamicResource ThemeForeground}" 
               Padding="2">
             <MenuItem Header="_File">

@@ -70,6 +70,23 @@
         </Setter>
     </Style>
 
+    <Style TargetType="TextBox">
+        <Setter Property="Background" Value="{DynamicResource ThemeControlBackground}"/>
+        <Setter Property="Foreground" Value="{DynamicResource ThemeForeground}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderBrush}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Padding" Value="4"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+    </Style>
+
+    <Style TargetType="ComboBox">
+        <Setter Property="Background" Value="{DynamicResource ThemeControlBackground}"/>
+        <Setter Property="Foreground" Value="{DynamicResource ThemeForeground}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderBrush}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Padding" Value="4"/>
+    </Style>
+
     <Style TargetType="DataGrid">
         <Setter Property="Background" Value="{DynamicResource ThemeWindowBackground}"/>
         <Setter Property="RowBackground" Value="{DynamicResource ThemeControlBackground}"/>
@@ -129,31 +146,126 @@
         </Setter>
     </Style>
 
+    <Style TargetType="DatePickerTextBox">
+        <Setter Property="Background" Value="{DynamicResource ThemeControlBackground}"/>
+        <Setter Property="Foreground" Value="{DynamicResource ThemeForeground}"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Padding" Value="4"/>
+    </Style>
+
     <Style x:Key="ThemeCalendarDayButton" TargetType="CalendarDayButton">
+        <Setter Property="MinWidth" Value="24"/>
+        <Setter Property="MinHeight" Value="24"/>
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="Foreground" Value="{DynamicResource ThemeForeground}"/>
-        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="CalendarDayButton">
+                    <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="2" Margin="1">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="border" Property="Background" Value="{DynamicResource ThemePrimary}"/>
+                            <Setter Property="Foreground" Value="{DynamicResource ThemePrimaryForeground}"/>
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="border" Property="Background" Value="{DynamicResource ThemePrimary}"/>
+                            <Setter Property="Foreground" Value="{DynamicResource ThemePrimaryForeground}"/>
+                        </Trigger>
+                        <Trigger Property="IsInactive" Value="True">
+                            <Setter Property="Opacity" Value="0.4"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <Style x:Key="ThemeCalendarButton" TargetType="CalendarButton">
+        <Setter Property="MinWidth" Value="40"/>
+        <Setter Property="MinHeight" Value="40"/>
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="Foreground" Value="{DynamicResource ThemeForeground}"/>
-        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="CalendarButton">
+                    <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="2" Margin="1">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="border" Property="Background" Value="{DynamicResource ThemePrimary}"/>
+                            <Setter Property="Foreground" Value="{DynamicResource ThemePrimaryForeground}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <Style x:Key="ThemeCalendarItem" TargetType="CalendarItem">
-        <Setter Property="Background" Value="{DynamicResource ThemeControlBackground}"/>
-        <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderBrush}"/>
-        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="CalendarItem">
+                    <ControlTemplate.Resources>
+                        <DataTemplate x:Key="{x:Static CalendarItem.DayTitleTemplateResourceKey}">
+                            <TextBlock Text="{Binding}" FontWeight="Bold" Foreground="{DynamicResource ThemeForeground}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,6,0,6"/>
+                        </DataTemplate>
+                    </ControlTemplate.Resources>
+                    
+                    <Border Background="{DynamicResource ThemeControlBackground}" 
+                            BorderBrush="{DynamicResource ThemeBorderBrush}" 
+                            BorderThickness="1" CornerRadius="3" Padding="4">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            
+                            <Grid Margin="0,0,0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Button x:Name="PART_PreviousButton" Grid.Column="0" Content="&#x25C0;" BorderThickness="0" Background="Transparent" Foreground="{DynamicResource ThemeForeground}" Padding="8,4" Cursor="Hand"/>
+                                <Button x:Name="PART_HeaderButton" Grid.Column="1" FontWeight="Bold" BorderThickness="0" Background="Transparent" Foreground="{DynamicResource ThemeForeground}" Cursor="Hand"/>
+                                <Button x:Name="PART_NextButton" Grid.Column="2" Content="&#x25B6;" BorderThickness="0" Background="Transparent" Foreground="{DynamicResource ThemeForeground}" Padding="8,4" Cursor="Hand"/>
+                            </Grid>
+                            
+                            <Grid x:Name="PART_MonthView" Grid.Row="1" Visibility="Visible">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/> <RowDefinition Height="Auto"/> <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/> <RowDefinition Height="Auto"/> <RowDefinition Height="Auto"/> <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/> <ColumnDefinition Width="Auto"/> <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/> <ColumnDefinition Width="Auto"/> <ColumnDefinition Width="Auto"/> <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                            </Grid>
+                            <Grid x:Name="PART_YearView" Grid.Row="1" Visibility="Hidden">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/> <RowDefinition Height="Auto"/> <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/> <ColumnDefinition Width="Auto"/> <ColumnDefinition Width="Auto"/> <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                            </Grid>
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <Style x:Key="ThemeCalendar" TargetType="Calendar">
         <Setter Property="Background" Value="{DynamicResource ThemeControlBackground}"/>
         <Setter Property="Foreground" Value="{DynamicResource ThemeForeground}"/>
         <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderBrush}"/>
+        <Setter Property="CalendarItemStyle" Value="{StaticResource ThemeCalendarItem}"/>
         <Setter Property="CalendarDayButtonStyle" Value="{StaticResource ThemeCalendarDayButton}"/>
         <Setter Property="CalendarButtonStyle" Value="{StaticResource ThemeCalendarButton}"/>
-        <Setter Property="CalendarItemStyle" Value="{StaticResource ThemeCalendarItem}"/>
     </Style>
 
     <Style TargetType="DatePicker">
@@ -186,15 +298,15 @@
                     <Border x:Name="border" Background="{TemplateBinding Background}" BorderThickness="0" CornerRadius="2">
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" MinWidth="24"/> 
+                                <ColumnDefinition x:Name="IconCol" Width="Auto" MinWidth="24"/> 
                                 <ColumnDefinition Width="*"/> 
-                                <ColumnDefinition Width="Auto" SharedSizeGroup="Shortcut"/> 
-                                <ColumnDefinition Width="15"/> 
+                                <ColumnDefinition x:Name="ShortcutCol" Width="Auto" SharedSizeGroup="Shortcut"/> 
+                                <ColumnDefinition x:Name="ArrowCol" Width="15"/> 
                             </Grid.ColumnDefinitions>
                             
-                            <ContentPresenter ContentSource="Icon" Margin="4,0" VerticalAlignment="Center"/>
+                            <ContentPresenter x:Name="Icon" ContentSource="Icon" Margin="4,0" VerticalAlignment="Center"/>
                             <ContentPresenter Grid.Column="1" ContentSource="Header" Margin="{TemplateBinding Padding}" VerticalAlignment="Center" RecognizesAccessKey="True"/>
-                            <TextBlock Grid.Column="2" Text="{TemplateBinding InputGestureText}" Margin="15,0,10,0" VerticalAlignment="Center" Opacity="0.5"/>
+                            <TextBlock x:Name="Shortcut" Grid.Column="2" Text="{TemplateBinding InputGestureText}" Margin="15,0,10,0" VerticalAlignment="Center" Opacity="0.5"/>
                             <Path x:Name="RightArrow" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Center"
                                   Data="M 0 0 L 4 4 L 0 8 Z" Fill="{TemplateBinding Foreground}" Visibility="Collapsed"/>
                             
@@ -212,7 +324,14 @@
                     <ControlTemplate.Triggers>
                         <Trigger Property="Role" Value="TopLevelHeader">
                             <Setter Property="Padding" Value="8,4"/>
+                            <Setter TargetName="IconCol" Property="MinWidth" Value="0"/>
+                            <Setter TargetName="IconCol" Property="Width" Value="0"/>
+                            <Setter TargetName="ShortcutCol" Property="Width" Value="0"/>
+                            <Setter TargetName="ArrowCol" Property="Width" Value="0"/>
+                            <Setter TargetName="Icon" Property="Visibility" Value="Collapsed"/>
+                            <Setter TargetName="Shortcut" Property="Visibility" Value="Collapsed"/>
                         </Trigger>
+                        
                         <Trigger Property="Role" Value="SubmenuItem">
                             <Setter Property="Padding" Value="8,6"/>
                         </Trigger>
