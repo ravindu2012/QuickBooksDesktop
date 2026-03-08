@@ -128,4 +128,20 @@ public partial class App : System.Windows.Application
         _host.Dispose();
         base.OnExit(e);
     }
+
+    public void ChangeTheme(bool isDark)
+    {
+        string themeName = isDark ? "DarkColors.xaml" : "LightColors.xaml";
+        var themeUri = new Uri($"/QBD.WPF;component/Themes/{themeName}", UriKind.RelativeOrAbsolute);
+
+        var mergedDicts = System.Windows.Application.Current.Resources.MergedDictionaries;
+        
+        var oldTheme = mergedDicts.FirstOrDefault(d => d.Source != null && d.Source.OriginalString.Contains("Colors.xaml"));
+        if (oldTheme != null)
+        {
+            mergedDicts.Remove(oldTheme);
+        }
+
+        mergedDicts.Insert(0, new ResourceDictionary { Source = themeUri });
+    }
 }

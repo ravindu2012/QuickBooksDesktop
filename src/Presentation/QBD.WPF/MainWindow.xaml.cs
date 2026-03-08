@@ -8,6 +8,7 @@ namespace QBD.WPF;
 public partial class MainWindow : Window
 {
     private readonly INavigationService _navigationService;
+    private bool _isDarkMode = false;
 
     public MainWindow(INavigationService navigationService, HomePageViewModel homePageViewModel)
     {
@@ -101,5 +102,12 @@ public partial class MainWindow : Window
     {
         MessageBox.Show("QuickBooks Desktop Enterprise Clone\nVersion 1.0\n\nA full-featured accounting application.",
             "About", MessageBoxButton.OK, MessageBoxImage.Information);
+    }
+
+    private void ToggleDarkMode_Click(object sender, RoutedEventArgs e)
+    {
+        _isDarkMode = !_isDarkMode;
+        var app = (App)System.Windows.Application.Current;
+        app.ChangeTheme(_isDarkMode);
     }
 }
