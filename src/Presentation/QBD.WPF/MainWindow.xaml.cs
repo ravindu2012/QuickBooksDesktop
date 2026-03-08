@@ -11,7 +11,7 @@ public partial class MainWindow : Window
 {
     private readonly INavigationService _navigationService;
     private bool _isDarkMode = false;
-    private string _themeConfigFile;
+    private string _themeConfigFile = string.Empty;
 
     public MainWindow(INavigationService navigationService, HomePageViewModel homePageViewModel)
     {

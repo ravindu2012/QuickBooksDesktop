@@ -7,10 +7,5 @@
     <SolidColorBrush x:Key="ThemePrimary" Color="#0D47A1"/>
     <SolidColorBrush x:Key="ThemePrimaryForeground" Color="#F1F1F1"/>
     <SolidColorBrush x:Key="ThemeMenuBackground" Color="#2D2D30"/>
-    <SolidColorBrush x:Key="{x:Static SystemColors.MenuBrushKey}" Color="#2D2D30"/>
-    <SolidColorBrush x:Key="{x:Static SystemColors.MenuBarBrushKey}" Color="#1E1E1E"/>
-    <SolidColorBrush x:Key="{x:Static SystemColors.MenuTextBrushKey}" Color="#F1F1F1"/>
-    <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="#2D2D30"/>
-    <SolidColorBrush x:Key="{x:Static SystemColors.ControlTextBrushKey}" Color="#F1F1F1"/>
-    <SolidColorBrush x:Key="{x:Static SystemColors.WindowBrushKey}" Color="#2D2D30"/>
+    <SolidColorBrush x:Key="ThemeDangerForeground" Color="#FF4444"/>
 </ResourceDictionary>

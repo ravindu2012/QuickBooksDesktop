@@ -154,6 +154,7 @@
                                 <DataGridTextColumn.ElementStyle>
                                     <Style TargetType="TextBlock">
                                         <Setter Property="TextAlignment" Value="Right"/>
+                                        <Setter Property="Foreground" Value="{DynamicResource ThemeForeground}"/>
                                     </Style>
                                 </DataGridTextColumn.ElementStyle>
                             </DataGridTextColumn>
@@ -161,6 +162,7 @@
                                 <DataGridTextColumn.ElementStyle>
                                     <Style TargetType="TextBlock">
                                         <Setter Property="TextAlignment" Value="Right"/>
+                                        <Setter Property="Foreground" Value="{DynamicResource ThemeForeground}"/>
                                     </Style>
                                 </DataGridTextColumn.ElementStyle>
                             </DataGridTextColumn>
@@ -192,7 +194,7 @@
                         <Button Content="Save &amp; Post" Command="{Binding SaveAndPostCommand}" Padding="16,6" Margin="0,0,8,0"/>
                         <Button Content="Clear" Command="{Binding ClearCommand}" Padding="16,6" Margin="0,0,8,0"/>
                         <Button Content="Void" Command="{Binding VoidCommand}" Padding="16,6" Margin="0,0,8,0"
-                                Foreground="Red"/>
+                                Foreground="{DynamicResource ThemeDangerForeground}"/>
                         <Button Content="Print" Command="{Binding PrintCommand}" Padding="16,6"/>
                     </StackPanel>
 
@@ -203,7 +205,7 @@
                         </DockPanel>
                         <DockPanel Margin="0,2">
                             <TextBlock Text="Tax:" DockPanel.Dock="Left"/>
-                            <TextBlock Text="{Binding TaxTotal, StringFormat=C}" TextAlignment="Right"/>
+                            <TextBlock Text="{Binding TaxTotal, StringFormat=C}" TextAlignment="Right" Foreground="{DynamicResource ThemeForeground}"/>
                         </DockPanel>
                         <Separator Margin="0,4" Background="{DynamicResource ThemeBorderBrush}"/>
                         <DockPanel Margin="0,2">
@@ -211,8 +213,8 @@
                             <TextBlock Text="{Binding GrandTotal, StringFormat=C}" TextAlignment="Right" FontWeight="Bold" FontSize="14"/>
                         </DockPanel>
                         <DockPanel Margin="0,2">
-                            <TextBlock Text="Balance Due:" DockPanel.Dock="Left" FontWeight="Bold" Foreground="#C62828"/>
-                            <TextBlock Text="{Binding BalanceDue, StringFormat=C}" TextAlignment="Right" FontWeight="Bold" Foreground="#C62828"/>
+                            <TextBlock Text="Balance Due:" DockPanel.Dock="Left" FontWeight="Bold" Foreground="{DynamicResource ThemeDangerForeground}"/>
+                            <TextBlock Text="{Binding BalanceDue, StringFormat=C}" TextAlignment="Right" FontWeight="Bold" Foreground="{DynamicResource ThemeDangerForeground}"/>
                         </DockPanel>
                     </StackPanel>
                 </Grid>
@@ -269,17 +271,23 @@
                     <DataGridTextColumn Header="Memo" Binding="{Binding Memo}" Width="*"/>
                     <DataGridTextColumn Header="Debit" Binding="{Binding Debit, StringFormat=N2}" Width="100">
                         <DataGridTextColumn.ElementStyle>
-                            <Style TargetType="TextBlock"><Setter Property="TextAlignment" Value="Right"/></Style>
+                            <Style TargetType="TextBlock"><Setter Property="TextAlignment" Value="Right"/>
+                            <Setter Property="Foreground" Value="{DynamicResource ThemeForeground}"/>
+                            </Style>
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
                     <DataGridTextColumn Header="Credit" Binding="{Binding Credit, StringFormat=N2}" Width="100">
                         <DataGridTextColumn.ElementStyle>
-                            <Style TargetType="TextBlock"><Setter Property="TextAlignment" Value="Right"/></Style>
+                            <Style TargetType="TextBlock"><Setter Property="TextAlignment" Value="Right"/>
+                            <Setter Property="Foreground" Value="{DynamicResource ThemeForeground}"/>
+                            </Style>
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
                     <DataGridTextColumn Header="Balance" Binding="{Binding RunningBalance, StringFormat=N2}" Width="110">
                         <DataGridTextColumn.ElementStyle>
-                            <Style TargetType="TextBlock"><Setter Property="TextAlignment" Value="Right" /><Setter Property="FontWeight" Value="Bold"/></Style>
+                            <Style TargetType="TextBlock"><Setter Property="TextAlignment" Value="Right" /><Setter Property="FontWeight" Value="Bold"/>
+                            <Setter Property="Foreground" Value="{DynamicResource ThemeForeground}"/>
+                            </Style>
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
                     <DataGridCheckBoxColumn Header="Clr" Binding="{Binding IsCleared}" Width="40"/>

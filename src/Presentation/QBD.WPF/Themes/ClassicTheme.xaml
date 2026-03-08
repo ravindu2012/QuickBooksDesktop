@@ -133,12 +133,7 @@
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="1,1,1,0" Margin="2,2,2,0"
                             CornerRadius="2,2,0,0">
-                        <ContentPresenter x:Name="ContentSite"
-                                          VerticalAlignment="Center"
-                                          HorizontalAlignment="Center"
-                                          ContentSource="Header"
-                                          Margin="{TemplateBinding Padding}"
-                                          TextElement.Foreground="{TemplateBinding Foreground}"/>
+                        <ContentPresenter x:Name="ContentSite" ContentSource="Header" TextElement.Foreground="{TemplateBinding Foreground}"/>
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsSelected" Value="True">
@@ -167,7 +162,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="CalendarDayButton">
                     <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="2" Margin="1">
-                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" TextElement.Foreground="{TemplateBinding Foreground}"/>
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
@@ -196,7 +191,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="CalendarButton">
                     <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="2" Margin="1">
-                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" TextElement.Foreground="{TemplateBinding Foreground}"/>
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
@@ -310,8 +305,8 @@
                             </Grid.ColumnDefinitions>
                             
                             <ContentPresenter x:Name="Icon" ContentSource="Icon" Margin="4,0" VerticalAlignment="Center"/>
-                            <ContentPresenter Grid.Column="1" ContentSource="Header" Margin="{TemplateBinding Padding}" VerticalAlignment="Center" RecognizesAccessKey="True" TextElement.Foreground="{TemplateBinding Foreground}"/>
-                            <TextBlock x:Name="Shortcut" Grid.Column="2" Text="{TemplateBinding InputGestureText}" Margin="15,0,10,0" VerticalAlignment="Center" Opacity="0.5"/>
+                            <ContentPresenter Grid.Column="1" ContentSource="Header" TextElement.Foreground="{TemplateBinding Foreground}" VerticalAlignment="Center" RecognizesAccessKey="True" Margin="{TemplateBinding Padding}"/>
+                            <TextBlock x:Name="Shortcut" Grid.Column="2" Text="{TemplateBinding InputGestureText}" Margin="15,0,10,0" VerticalAlignment="Center" Opacity="0.5" Foreground="{TemplateBinding Foreground}"/>
                             <Path x:Name="RightArrow" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Center"
                                   Data="M 0 0 L 4 4 L 0 8 Z" Fill="{TemplateBinding Foreground}" Visibility="Collapsed"/>
                             
