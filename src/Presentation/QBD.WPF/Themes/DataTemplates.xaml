@@ -205,6 +205,9 @@
 
                         <Button Content="P_rint" TabIndex="5"
                                 Command="{Binding PrintCommand}" Padding="16,6"/>
+                        
+                        <Button Content="Export _PDF" TabIndex="6"
+                                Command="{Binding ExportToPdfCommand}" Padding="16,6"/>
                     </StackPanel>
 
                     <StackPanel Grid.Column="1" HorizontalAlignment="Right" MinWidth="200">
