@@ -250,13 +250,13 @@
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="Account: " FontWeight="Bold" VerticalAlignment="Center"/>
                     <TextBlock Text="{Binding AccountName}" FontWeight="Bold" FontSize="14" VerticalAlignment="Center" Margin="0,0,16,0"/>
-                    
+
                     <TextBlock Text="From:" VerticalAlignment="Center" Margin="0,0,4,0"/>
                     <DatePicker SelectedDate="{Binding FromDate}" Width="120" Margin="0,0,8,0" TabIndex="1"/>
-                    
+
                     <TextBlock Text="To:" VerticalAlignment="Center" Margin="0,0,4,0"/>
                     <DatePicker SelectedDate="{Binding ToDate}" Width="120" Margin="0,0,8,0" TabIndex="2"/>
-                    
+
                     <Button Content="_Refresh" Command="{Binding LoadEntriesCommand}" Padding="8,2" TabIndex="3"/>
                 </StackPanel>
             </Border>
@@ -367,9 +367,11 @@
                         <ComboBoxItem Content="Custom"/>
                     </ComboBox>
                     <TextBlock Text="From:" VerticalAlignment="Center" Margin="0,0,4,0"/>
-                    <DatePicker SelectedDate="{Binding FromDate}" Width="120" Margin="0,0,8,0"/>
+                    <DatePicker SelectedDate="{Binding FromDate}" Width="120" Margin="0,0,8,0" TabIndex="1"/>
+
                     <TextBlock Text="To:" VerticalAlignment="Center" Margin="0,0,4,0"/>
                     <DatePicker SelectedDate="{Binding ToDate}" Width="120" Margin="0,0,8,0"/>
+                    
                     <TextBlock Text="Basis:" VerticalAlignment="Center" Margin="0,0,4,0"/>
                     <ComboBox Width="100" SelectedItem="{Binding ReportBasis}" Margin="0,0,8,0">
                         <ComboBoxItem Content="Accrual"/>

@@ -1,7 +1,9 @@
 using System;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using QBD.Application.Interfaces;
 using QBD.Application.ViewModels;
 
@@ -13,11 +15,11 @@ public partial class MainWindow : Window
     private bool _isDarkMode = false;
     private string _themeConfigFile = string.Empty;
 
-    public System.Windows.Input.ICommand HomePageCommand => new RelayCommand(obj => _navigationService.OpenHomePage());
-    public System.Windows.Input.ICommand FocusSearchCommand => new RelayCommand(obj => FocusSearch());
-    public System.Windows.Input.ICommand CloseCurrentTabCommand => new RelayCommand(obj => CloseCurrentTab());
-    public System.Windows.Input.ICommand SaveCommand => new RelayCommand(obj => ExecuteGlobalSave());
-    public System.Windows.Input.ICommand NewCommand => new RelayCommand(obj => ExecuteGlobalNew());
+    public ICommand HomePageCommand => new RelayCommand(obj => _navigationService.OpenHomePage());
+    public ICommand FocusSearchCommand => new RelayCommand(obj => FocusSearch());
+    public ICommand CloseCurrentTabCommand => new RelayCommand(obj => CloseCurrentTab());
+    public ICommand SaveCommand => new RelayCommand(obj => ExecuteGlobalSave());
+    public ICommand NewCommand => new RelayCommand(obj => ExecuteGlobalNew());
 
     public MainWindow(INavigationService navigationService, HomePageViewModel homePageViewModel)
     {
@@ -29,10 +31,7 @@ public partial class MainWindow : Window
         try
         {
             var appDataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "QBD", "QBD.WPF");
-            if (!Directory.Exists(appDataDirectory))
-            {
-                Directory.CreateDirectory(appDataDirectory);
-            }
+            if (!Directory.Exists(appDataDirectory)) Directory.CreateDirectory(appDataDirectory);
             
             _themeConfigFile = Path.Combine(appDataDirectory, "theme.cfg");
 
@@ -59,8 +58,7 @@ public partial class MainWindow : Window
     {
         foreach (var item in WorkspaceTabs.Items)
         {
-            if (item is ViewModelBase existing && existing.GetType() == viewModel.GetType()
-                && existing.Title == viewModel.Title)
+            if (item is ViewModelBase existing && existing.GetType() == viewModel.GetType() && existing.Title == viewModel.Title)
             {
                 WorkspaceTabs.SelectedItem = item;
                 return;
@@ -70,15 +68,8 @@ public partial class MainWindow : Window
         WorkspaceTabs.SelectedItem = viewModel;
     }
 
-    public void CloseTab(object viewModel)
-    {
-        WorkspaceTabs.Items.Remove(viewModel);
-    }
-
-    public void CloseAllTabs()
-    {
-        WorkspaceTabs.Items.Clear();
-    }
+    public void CloseTab(object viewModel) => WorkspaceTabs.Items.Remove(viewModel);
+    public void CloseAllTabs() => WorkspaceTabs.Items.Clear();
 
     private void Exit_Click(object sender, RoutedEventArgs e) => System.Windows.Application.Current.Shutdown();
     private void HomePage_Click(object sender, RoutedEventArgs e) => _navigationService.OpenHomePage();
@@ -124,136 +115,123 @@ public partial class MainWindow : Window
 
     private void CloseTab_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is Button btn && btn.DataContext is ViewModelBase vm)
-        {
-            CloseTab(vm);
-        }
+        if (sender is Button btn && btn.DataContext is ViewModelBase vm) CloseTab(vm);
     }
-
     private void CloseAllTabs_Click(object sender, RoutedEventArgs e) => CloseAllTabs();
 
     private void About_Click(object sender, RoutedEventArgs e)
     {
-        MessageBox.Show("QuickBooks Desktop Enterprise Clone\nVersion 1.0\n\nA full-featured accounting application.",
-            "About", MessageBoxButton.OK, MessageBoxImage.Information);
+        MessageBox.Show("QuickBooks Desktop Enterprise Clone\nVersion 1.0\n\nA full-featured accounting application.", "About", MessageBoxButton.OK, MessageBoxImage.Information);
     }
 
     private void ToggleDarkMode_Click(object sender, RoutedEventArgs e)
     {
         _isDarkMode = !_isDarkMode;
-        var app = (App)System.Windows.Application.Current;
-        app.ChangeTheme(_isDarkMode);
-
-        try
-        {
-            if (!string.IsNullOrEmpty(_themeConfigFile))
-            {
-                File.WriteAllText(_themeConfigFile, _isDarkMode.ToString());
-            }
-        }
-        catch (Exception ex)
-        {
-            System.Diagnostics.Debug.WriteLine($"Error saving theme: {ex.Message}");
-        }
+        ((App)System.Windows.Application.Current).ChangeTheme(_isDarkMode);
+        try { if (!string.IsNullOrEmpty(_themeConfigFile)) File.WriteAllText(_themeConfigFile, _isDarkMode.ToString()); }
+        catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"Error saving theme: {ex.Message}"); }
     }
 
     private void CloseCurrentTab()
     {
-        if (WorkspaceTabs.SelectedItem != null)
-        {
-            CloseTab(WorkspaceTabs.SelectedItem);
-        }
+        if (WorkspaceTabs.SelectedItem != null) CloseTab(WorkspaceTabs.SelectedItem);
     }
 
     private void FocusSearch()
     {
         StatusText.Text = "Searching for search box...";
 
-        var currentContent = WorkspaceTabs.SelectedContent;
-        var container = WorkspaceTabs.ItemContainerGenerator.ContainerFromItem(WorkspaceTabs.SelectedItem) as FrameworkElement;
+        var searchBox = FindSearchBox(WorkspaceTabs);
 
-        if (currentContent != null)
+        if (searchBox != null)
         {
-            var searchBox = FindVisualChild<TextBox>(WorkspaceTabs);
-
-            if (searchBox != null)
-            {
-                searchBox.Focus();
-                System.Windows.Input.Keyboard.Focus(searchBox);
-                StatusText.Text = "Search box focused.";
-            }
-            else
-            {
-                StatusText.Text = "No search box found in this view.";
-            }
+            searchBox.Focus();
+            Keyboard.Focus(searchBox);
+            StatusText.Text = "Search box focused (Ctrl+F).";
+        }
+        else
+        {
+            StatusText.Text = "No search box found in this view.";
         }
     }
 
     private void ExecuteGlobalNew()
     {
         var selectedItem = WorkspaceTabs.SelectedItem;
-        if (selectedItem != null)
+        if (selectedItem == null) return;
+
+        StatusText.Text = "Opening new entry form...";
+
+        var itemType = selectedItem.GetType();
+        string[] commandNames = { "NewEntityCommand", "NewItemCommand", "NewCommand" };
+
+        foreach (var name in commandNames)
         {
-            try 
+            var prop = itemType.GetProperty(name);
+            if (prop != null && prop.GetValue(selectedItem) is ICommand command && command.CanExecute(null))
             {
-                dynamic viewModel = selectedItem;
-                StatusText.Text = "Opening new entry form...";
-
-                if (viewModel.NewEntityCommand != null) viewModel.NewEntityCommand.Execute(null);
-                else if (viewModel.NewItemCommand != null) viewModel.NewItemCommand.Execute(null);
-                else if (viewModel.NewCommand != null) viewModel.NewCommand.Execute(null);
-
+                command.Execute(null);
                 (WorkspaceTabs.SelectedContent as FrameworkElement)?.Focus();
-            }
-            catch (Exception ex)
-            {
-                StatusText.Text = "New entry not available here.";
-                System.Diagnostics.Debug.WriteLine($"New error: {ex.Message}");
+                return;
             }
         }
+        StatusText.Text = "New entry not available here.";
     }
 
-    private void ExecuteGlobalSave()
+    private async void ExecuteGlobalSave()
     {
         var selectedItem = WorkspaceTabs.SelectedItem;
-        if (selectedItem != null)
+        if (selectedItem == null) return;
+
+        var prop = selectedItem.GetType().GetProperty("SaveCommand");
+        if (prop != null && prop.GetValue(selectedItem) is ICommand command && command.CanExecute(null))
         {
+            StatusText.Text = "Saving...";
             try 
             {
-                dynamic viewModel = selectedItem;
-                if (viewModel.SaveCommand != null)
+                var asyncMethod = command.GetType().GetMethod("ExecuteAsync");
+                if (asyncMethod != null && asyncMethod.Invoke(command, new object?[] { null }) is Task task)
                 {
-                    viewModel.SaveCommand.Execute(null);
-                    StatusText.Text = "Transaction saved successfully (Ctrl+S).";
-
-                    (WorkspaceTabs.SelectedContent as FrameworkElement)?.Focus();
+                    await task;
                 }
+                else
+                {
+                    command.Execute(null);
+                }
+                StatusText.Text = "Transaction saved successfully (Ctrl+S).";
             }
             catch (Exception ex)
             {
-                StatusText.Text = "Save failed or not supported.";
+                StatusText.Text = "Save failed.";
                 System.Diagnostics.Debug.WriteLine($"Save error: {ex.Message}");
             }
+            
+            (WorkspaceTabs.SelectedContent as FrameworkElement)?.Focus();
+        }
+        else
+        {
+            StatusText.Text = "Save not supported in this view.";
         }
     }
 
-    private T? FindVisualChild<T>(DependencyObject? obj) where T : DependencyObject
+    private TextBox? FindSearchBox(DependencyObject? obj)
     {
         if (obj == null) return null;
 
         for (int i = 0; i < System.Windows.Media.VisualTreeHelper.GetChildrenCount(obj); i++)
         {
             var child = System.Windows.Media.VisualTreeHelper.GetChild(obj, i);
-            if (child != null && child is T t) return t;
             
-            var childOfChild = FindVisualChild<T>(child);
+            if (child is TextBox tb && tb.TabIndex == 1) return tb;
+            
+            var childOfChild = FindSearchBox(child);
             if (childOfChild != null) return childOfChild;
         }
         return null;
     }
 }
 
-public class RelayCommand : System.Windows.Input.ICommand
+public class RelayCommand : ICommand
 {
     private readonly Action<object?> _execute;
     public RelayCommand(Action<object?> execute) => _execute = execute;
