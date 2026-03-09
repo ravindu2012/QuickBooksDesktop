@@ -17,6 +17,7 @@
         <KeyBinding Key="Escape" Command="{Binding CloseCurrentTabCommand}"/>
         <KeyBinding Modifiers="Control" Key="S" Command="{Binding SaveCommand}"/>
         <KeyBinding Modifiers="Control" Key="N" Command="{Binding NewCommand}"/>
+        <KeyBinding Key="F1" Command="{Binding ShowKeyboardShortcutsCommand}"/>
     </Window.InputBindings>
 
     <DockPanel LastChildFill="True">
@@ -131,6 +132,8 @@
                 <MenuItem Header="Close Tab" InputGestureText="Esc"/>
             </MenuItem>
             <MenuItem Header="_Help">
+                <MenuItem Header="Keyboard Shortcuts" Click="KeyboardShortcuts_Click" InputGestureText="F1"/>
+                <Separator/>
                 <MenuItem Header="About QuickBooks Desktop" Click="About_Click"/>
             </MenuItem>
         </Menu>
