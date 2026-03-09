@@ -11,6 +11,14 @@
         <controls:ViewModelTemplateSelector x:Key="ViewModelTemplateSelector"/>
     </Window.Resources>
 
+    <Window.InputBindings>
+        <KeyBinding Key="F5" Command="{Binding HomePageCommand}"/>
+        <KeyBinding Modifiers="Control" Key="F" Command="{Binding FocusSearchCommand}"/>
+        <KeyBinding Key="Esc" Command="{Binding CloseCurrentTabCommand}"/>
+        <KeyBinding Modifiers="Control" Key="S" Command="{Binding SaveCommand}"/>
+        <KeyBinding Modifiers="Control" Key="N" Command="{Binding NewCommand}"/>
+    </Window.InputBindings>
+
     <DockPanel LastChildFill="True">
         <!-- Menu Bar -->
         <Menu DockPanel.Dock="Top" 

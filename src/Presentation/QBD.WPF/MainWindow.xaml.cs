@@ -13,10 +13,18 @@ public partial class MainWindow : Window
     private bool _isDarkMode = false;
     private string _themeConfigFile = string.Empty;
 
+    public System.Windows.Input.ICommand HomePageCommand => new RelayCommand(obj => _navigationService.OpenHomePage());
+    public System.Windows.Input.ICommand FocusSearchCommand => new RelayCommand(obj => FocusSearch());
+    public System.Windows.Input.ICommand CloseCurrentTabCommand => new RelayCommand(obj => CloseCurrentTab());
+    public System.Windows.Input.ICommand SaveCommand => new RelayCommand(obj => ExecuteGlobalSave());
+    public System.Windows.Input.ICommand NewCommand => new RelayCommand(obj => ExecuteGlobalNew());
+
     public MainWindow(INavigationService navigationService, HomePageViewModel homePageViewModel)
     {
         InitializeComponent();
         _navigationService = navigationService;
+
+        this.DataContext = this;
 
         try
         {
@@ -148,4 +156,108 @@ public partial class MainWindow : Window
             System.Diagnostics.Debug.WriteLine($"Error saving theme: {ex.Message}");
         }
     }
+
+    private void CloseCurrentTab()
+    {
+        if (WorkspaceTabs.SelectedItem != null)
+        {
+            CloseTab(WorkspaceTabs.SelectedItem);
+        }
+    }
+
+    private void FocusSearch()
+    {
+        StatusText.Text = "Searching for search box...";
+
+        var currentContent = WorkspaceTabs.SelectedContent;
+        var container = WorkspaceTabs.ItemContainerGenerator.ContainerFromItem(WorkspaceTabs.SelectedItem) as FrameworkElement;
+
+        if (currentContent != null)
+        {
+            var searchBox = FindVisualChild<TextBox>(WorkspaceTabs);
+
+            if (searchBox != null)
+            {
+                searchBox.Focus();
+                System.Windows.Input.Keyboard.Focus(searchBox);
+                StatusText.Text = "Search box focused.";
+            }
+            else
+            {
+                StatusText.Text = "No search box found in this view.";
+            }
+        }
+    }
+
+    private void ExecuteGlobalNew()
+    {
+        var selectedItem = WorkspaceTabs.SelectedItem;
+        if (selectedItem != null)
+        {
+            try 
+            {
+                dynamic viewModel = selectedItem;
+                StatusText.Text = "Opening new entry form...";
+
+                if (viewModel.NewEntityCommand != null) viewModel.NewEntityCommand.Execute(null);
+                else if (viewModel.NewItemCommand != null) viewModel.NewItemCommand.Execute(null);
+                else if (viewModel.NewCommand != null) viewModel.NewCommand.Execute(null);
+
+                (WorkspaceTabs.SelectedContent as FrameworkElement)?.Focus();
+            }
+            catch (Exception ex)
+            {
+                StatusText.Text = "New entry not available here.";
+                System.Diagnostics.Debug.WriteLine($"New error: {ex.Message}");
+            }
+        }
+    }
+
+    private void ExecuteGlobalSave()
+    {
+        var selectedItem = WorkspaceTabs.SelectedItem;
+        if (selectedItem != null)
+        {
+            try 
+            {
+                dynamic viewModel = selectedItem;
+                if (viewModel.SaveCommand != null)
+                {
+                    viewModel.SaveCommand.Execute(null);
+                    StatusText.Text = "Transaction saved successfully (Ctrl+S).";
+
+                    (WorkspaceTabs.SelectedContent as FrameworkElement)?.Focus();
+                }
+            }
+            catch (Exception ex)
+            {
+                StatusText.Text = "Save failed or not supported.";
+                System.Diagnostics.Debug.WriteLine($"Save error: {ex.Message}");
+            }
+        }
+    }
+
+    private T? FindVisualChild<T>(DependencyObject? obj) where T : DependencyObject
+    {
+        if (obj == null) return null;
+
+        for (int i = 0; i < System.Windows.Media.VisualTreeHelper.GetChildrenCount(obj); i++)
+        {
+            var child = System.Windows.Media.VisualTreeHelper.GetChild(obj, i);
+            if (child != null && child is T t) return t;
+            
+            var childOfChild = FindVisualChild<T>(child);
+            if (childOfChild != null) return childOfChild;
+        }
+        return null;
+    }
+}
+
+public class RelayCommand : System.Windows.Input.ICommand
+{
+    private readonly Action<object?> _execute;
+    public RelayCommand(Action<object?> execute) => _execute = execute;
+    public bool CanExecute(object? parameter) => true;
+    public void Execute(object? parameter) => _execute(parameter);
+    public event EventHandler? CanExecuteChanged { add { } remove { } }
 }
