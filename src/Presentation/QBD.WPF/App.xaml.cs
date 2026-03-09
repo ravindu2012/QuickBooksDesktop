@@ -33,6 +33,7 @@ public partial class App : System.Windows.Application
                 services.AddScoped<ITransactionPostingService, TransactionPostingService>();
                 services.AddScoped<INumberSequenceService, NumberSequenceService>();
                 services.AddScoped<IAuditService, AuditService>();
+                services.AddTransient<IPdfExportService, PdfExportService>();
 
                 // Navigation
                 services.AddSingleton<NavigationService>();
