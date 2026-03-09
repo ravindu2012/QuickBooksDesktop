@@ -34,6 +34,7 @@ public partial class App : System.Windows.Application
                 services.AddScoped<INumberSequenceService, NumberSequenceService>();
                 services.AddScoped<IAuditService, AuditService>();
                 services.AddTransient<IPdfExportService, PdfExportService>();
+                services.AddSingleton<IFileDialogService, WpfFileDialogService>();
 
                 // Navigation
                 services.AddSingleton<NavigationService>();

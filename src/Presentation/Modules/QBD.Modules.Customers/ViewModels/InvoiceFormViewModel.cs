@@ -19,6 +19,7 @@ public partial class InvoiceFormViewModel : TransactionFormViewModelBase<Invoice
     private readonly IRepository<Terms> _termsRepository;
     private readonly INumberSequenceService _numberSequenceService;
     private readonly IPdfExportService _pdfExportService;
+    private readonly IFileDialogService _fileDialogService;
 
     [ObservableProperty] private ObservableCollection<Customer> _customers = new();
     [ObservableProperty] private ObservableCollection<Item> _items = new();
@@ -35,7 +36,8 @@ public partial class InvoiceFormViewModel : TransactionFormViewModelBase<Invoice
         IRepository<Item> itemRepository,
         IRepository<Terms> termsRepository,
         INumberSequenceService numberSequenceService,
-        IPdfExportService pdfExportService) : base(unitOfWork, postingService, navigationService)
+        IPdfExportService pdfExportService,
+        IFileDialogService fileDialogService) : base(unitOfWork, postingService, navigationService)
     {
         _invoiceRepository = invoiceRepository;
         _customerRepository = customerRepository;
@@ -43,6 +45,7 @@ public partial class InvoiceFormViewModel : TransactionFormViewModelBase<Invoice
         _termsRepository = termsRepository;
         _numberSequenceService = numberSequenceService;
         _pdfExportService = pdfExportService;
+        _fileDialogService = fileDialogService;
         Title = "Create Invoice";
     }
 
@@ -66,6 +69,7 @@ public partial class InvoiceFormViewModel : TransactionFormViewModelBase<Invoice
     {
         if (value != null)
         {
+            Header.Customer = value;
             Header.CustomerId = value.Id;
             Header.BillToAddress = value.BillToAddress;
             if (value.TermsId.HasValue)
@@ -150,55 +154,28 @@ public partial class InvoiceFormViewModel : TransactionFormViewModelBase<Invoice
     {
         if (Header == null) return;
 
-        // mock data for testing
-        if (Header.Customer == null)
-        {
-            Header.Customer = new Customer 
-            { 
-                CustomerName = "Test Company Ltd.", 
-                BillToAddress = "123 Business Road, London, UK" 
-            };
-            Header.BillToAddress = Header.Customer.BillToAddress;
-        }
+        var filePath = _fileDialogService.ShowSaveFileDialog(
+            $"Invoice_{Header.InvoiceNumber ?? "New"}.pdf",
+            ".pdf",
+            "PDF Documents (.pdf)|*.pdf");
 
-        if (Lines == null || Lines.Count == 0 || (Lines.Count == 1 && Lines[0].Amount == 0))
-        {
-            Lines.Clear();
-            Lines.Add(new InvoiceLine 
-            { 
-                Description = "Professional Software Development (Mock)", 
-                Qty = 5, 
-                Rate = 120, 
-                Amount = 600 
-            });
-
-            Header.Lines = Lines.ToList();
-            RecalculateTotals();
-        }
-        // -------------------------------------------
-
-        var dialog = new Microsoft.Win32.SaveFileDialog
-        {
-            FileName = $"Invoice_{Header.InvoiceNumber ?? "New"}.pdf",
-            DefaultExt = ".pdf",
-            Filter = "PDF Documents (.pdf)|*.pdf"
-        };
-
-        if (dialog.ShowDialog() == true)
+        if (filePath != null)
         {
             IsBusy = true;
             try
             {
-                await _pdfExportService.ExportInvoiceToPdfAsync(Header, dialog.FileName);
-                SetStatus($"Invoice exported successfully (with test data) to {dialog.FileName}");
+                Header.Lines = Lines.Where(l => l.Amount != 0).ToList();
+                RecalculateTotals();
+                await _pdfExportService.ExportInvoiceToPdfAsync(Header, filePath);
+                SetStatus($"Invoice exported to {filePath}");
             }
-            catch (Exception ex) 
-            { 
-                SetError($"Export failed: {ex.Message}"); 
+            catch (Exception ex)
+            {
+                SetError($"Export failed: {ex.Message}");
             }
-            finally 
-            { 
-                IsBusy = false; 
+            finally
+            {
+                IsBusy = false;
             }
         }
     }
