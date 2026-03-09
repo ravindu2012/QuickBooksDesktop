@@ -22,5 +22,6 @@
   <Folder Name="/tests/">
     <Project Path="tests/QBD.Domain.Tests/QBD.Domain.Tests.csproj" />
     <Project Path="tests/QBD.IntegrationTests/QBD.IntegrationTests.csproj" />
+    <Project Path="tests/QBD.UnitTests/QBD.UnitTests.csproj" />
   </Folder>
 </Solution>
