@@ -150,6 +150,33 @@ public partial class InvoiceFormViewModel : TransactionFormViewModelBase<Invoice
     {
         if (Header == null) return;
 
+        // mock data for testing
+        if (Header.Customer == null)
+        {
+            Header.Customer = new Customer 
+            { 
+                CustomerName = "Test Company Ltd.", 
+                BillToAddress = "123 Business Road, London, UK" 
+            };
+            Header.BillToAddress = Header.Customer.BillToAddress;
+        }
+
+        if (Lines == null || Lines.Count == 0 || (Lines.Count == 1 && Lines[0].Amount == 0))
+        {
+            Lines.Clear();
+            Lines.Add(new InvoiceLine 
+            { 
+                Description = "Professional Software Development (Mock)", 
+                Qty = 5, 
+                Rate = 120, 
+                Amount = 600 
+            });
+
+            Header.Lines = Lines.ToList();
+            RecalculateTotals();
+        }
+        // -------------------------------------------
+
         var dialog = new Microsoft.Win32.SaveFileDialog
         {
             FileName = $"Invoice_{Header.InvoiceNumber ?? "New"}.pdf",
@@ -163,7 +190,7 @@ public partial class InvoiceFormViewModel : TransactionFormViewModelBase<Invoice
             try
             {
                 await _pdfExportService.ExportInvoiceToPdfAsync(Header, dialog.FileName);
-                SetStatus($"Invoice exported successfully to {dialog.FileName}");
+                SetStatus($"Invoice exported successfully (with test data) to {dialog.FileName}");
             }
             catch (Exception ex) 
             { 
