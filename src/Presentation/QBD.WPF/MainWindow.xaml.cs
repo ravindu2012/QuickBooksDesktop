@@ -20,6 +20,7 @@ public partial class MainWindow : Window
     public ICommand CloseCurrentTabCommand { get; }
     public ICommand SaveCommand { get; }
     public ICommand NewCommand { get; }
+    public ICommand ShowKeyboardShortcutsCommand { get; }
 
     public MainWindow(INavigationService navigationService, HomePageViewModel homePageViewModel)
     {
@@ -30,6 +31,7 @@ public partial class MainWindow : Window
         CloseCurrentTabCommand = new ActionCommand(() => CloseCurrentTab());
         SaveCommand = new ActionCommand(() => ExecuteGlobalSave());
         NewCommand = new ActionCommand(() => ExecuteGlobalNew());
+        ShowKeyboardShortcutsCommand = new ActionCommand(() => ShowKeyboardShortcuts());
 
         InitializeComponent();
 
@@ -125,6 +127,101 @@ public partial class MainWindow : Window
         if (sender is Button btn && btn.DataContext is ViewModelBase vm) CloseTab(vm);
     }
     private void CloseAllTabs_Click(object sender, RoutedEventArgs e) => CloseAllTabs();
+
+    private void KeyboardShortcuts_Click(object sender, RoutedEventArgs e) => ShowKeyboardShortcuts();
+
+    private void ShowKeyboardShortcuts()
+    {
+        var shortcuts = new Window
+        {
+            Title = "Keyboard Shortcuts",
+            Width = 450,
+            Height = 480,
+            WindowStartupLocation = WindowStartupLocation.CenterOwner,
+            Owner = this,
+            ResizeMode = ResizeMode.NoResize,
+            Background = (System.Windows.Media.Brush)FindResource("ThemeWindowBackground")
+        };
+
+        var grid = new Grid { Margin = new Thickness(20) };
+        grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+        grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
+        grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+
+        var header = new TextBlock
+        {
+            Text = "Keyboard Shortcuts",
+            FontSize = 18,
+            FontWeight = FontWeights.Bold,
+            Margin = new Thickness(0, 0, 0, 12),
+            Foreground = (System.Windows.Media.Brush)FindResource("ThemeForeground")
+        };
+        Grid.SetRow(header, 0);
+
+        var items = new[]
+        {
+            ("F1", "Show this help dialog"),
+            ("F5", "Go to Home Page"),
+            ("Ctrl+N", "New transaction (context-aware)"),
+            ("Ctrl+S", "Save current form"),
+            ("Ctrl+F", "Focus search box"),
+            ("Ctrl+A", "Chart of Accounts"),
+            ("Esc", "Close current tab"),
+            ("Tab", "Move to next field"),
+            ("Shift+Tab", "Move to previous field"),
+            ("Alt+S", "Save (in forms)"),
+            ("Alt+P", "Save & Post (in forms)"),
+            ("Alt+L", "Clear (in forms)"),
+            ("Alt+V", "Void (in forms)"),
+            ("Alt+R", "Print (in forms)"),
+            ("Alt+N", "New (in lists)"),
+            ("Alt+E", "Edit (in lists)"),
+            ("Alt+D", "Delete (in lists)"),
+        };
+
+        var listView = new ListView
+        {
+            BorderThickness = new Thickness(1),
+            BorderBrush = (System.Windows.Media.Brush)FindResource("ThemeBorderBrush"),
+            Background = (System.Windows.Media.Brush)FindResource("ThemeControlBackground")
+        };
+
+        var gridView = new GridView();
+        gridView.Columns.Add(new GridViewColumn
+        {
+            Header = "Shortcut",
+            Width = 120,
+            DisplayMemberBinding = new System.Windows.Data.Binding("Item1")
+        });
+        gridView.Columns.Add(new GridViewColumn
+        {
+            Header = "Action",
+            Width = 280,
+            DisplayMemberBinding = new System.Windows.Data.Binding("Item2")
+        });
+        listView.View = gridView;
+
+        foreach (var item in items)
+            listView.Items.Add(item);
+
+        Grid.SetRow(listView, 1);
+
+        var closeBtn = new Button
+        {
+            Content = "Close",
+            Padding = new Thickness(20, 6, 20, 6),
+            HorizontalAlignment = HorizontalAlignment.Right,
+            Margin = new Thickness(0, 12, 0, 0)
+        };
+        closeBtn.Click += (_, _) => shortcuts.Close();
+        Grid.SetRow(closeBtn, 2);
+
+        grid.Children.Add(header);
+        grid.Children.Add(listView);
+        grid.Children.Add(closeBtn);
+        shortcuts.Content = grid;
+        shortcuts.ShowDialog();
+    }
 
     private void About_Click(object sender, RoutedEventArgs e)
     {
