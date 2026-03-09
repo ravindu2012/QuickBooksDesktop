@@ -14,7 +14,7 @@
     <Window.InputBindings>
         <KeyBinding Key="F5" Command="{Binding HomePageCommand}"/>
         <KeyBinding Modifiers="Control" Key="F" Command="{Binding FocusSearchCommand}"/>
-        <KeyBinding Key="Esc" Command="{Binding CloseCurrentTabCommand}"/>
+        <KeyBinding Key="Escape" Command="{Binding CloseCurrentTabCommand}"/>
         <KeyBinding Modifiers="Control" Key="S" Command="{Binding SaveCommand}"/>
         <KeyBinding Modifiers="Control" Key="N" Command="{Binding NewCommand}"/>
     </Window.InputBindings>
