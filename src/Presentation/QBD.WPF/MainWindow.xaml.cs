@@ -15,16 +15,23 @@ public partial class MainWindow : Window
     private bool _isDarkMode = false;
     private string _themeConfigFile = string.Empty;
 
-    public ICommand HomePageCommand => new RelayCommand(obj => _navigationService.OpenHomePage());
-    public ICommand FocusSearchCommand => new RelayCommand(obj => FocusSearch());
-    public ICommand CloseCurrentTabCommand => new RelayCommand(obj => CloseCurrentTab());
-    public ICommand SaveCommand => new RelayCommand(obj => ExecuteGlobalSave());
-    public ICommand NewCommand => new RelayCommand(obj => ExecuteGlobalNew());
+    public ICommand HomePageCommand { get; }
+    public ICommand FocusSearchCommand { get; }
+    public ICommand CloseCurrentTabCommand { get; }
+    public ICommand SaveCommand { get; }
+    public ICommand NewCommand { get; }
 
     public MainWindow(INavigationService navigationService, HomePageViewModel homePageViewModel)
     {
-        InitializeComponent();
         _navigationService = navigationService;
+
+        HomePageCommand = new ActionCommand(() => _navigationService.OpenHomePage());
+        FocusSearchCommand = new ActionCommand(() => FocusSearch());
+        CloseCurrentTabCommand = new ActionCommand(() => CloseCurrentTab());
+        SaveCommand = new ActionCommand(() => ExecuteGlobalSave());
+        NewCommand = new ActionCommand(() => ExecuteGlobalNew());
+
+        InitializeComponent();
 
         this.DataContext = this;
 
@@ -139,9 +146,9 @@ public partial class MainWindow : Window
 
     private void FocusSearch()
     {
-        StatusText.Text = "Searching for search box...";
-
-        var searchBox = FindSearchBox(WorkspaceTabs);
+        var contentPresenter = FindVisualChild<ContentPresenter>(WorkspaceTabs);
+        var searchRoot = contentPresenter ?? (DependencyObject)WorkspaceTabs;
+        var searchBox = FindSearchTextBox(searchRoot);
 
         if (searchBox != null)
         {
@@ -214,28 +221,49 @@ public partial class MainWindow : Window
         }
     }
 
-    private TextBox? FindSearchBox(DependencyObject? obj)
+    private TextBox? FindSearchTextBox(DependencyObject? obj)
     {
         if (obj == null) return null;
 
         for (int i = 0; i < System.Windows.Media.VisualTreeHelper.GetChildrenCount(obj); i++)
         {
             var child = System.Windows.Media.VisualTreeHelper.GetChild(obj, i);
-            
-            if (child is TextBox tb && tb.TabIndex == 1) return tb;
-            
-            var childOfChild = FindSearchBox(child);
-            if (childOfChild != null) return childOfChild;
+
+            if (child is TextBox tb)
+            {
+                var binding = tb.GetBindingExpression(TextBox.TextProperty);
+                var path = binding?.ParentBinding?.Path?.Path;
+                if (path is "FilterText" or "SearchText")
+                    return tb;
+            }
+
+            var result = FindSearchTextBox(child);
+            if (result != null) return result;
+        }
+        return null;
+    }
+
+    private T? FindVisualChild<T>(DependencyObject? obj) where T : DependencyObject
+    {
+        if (obj == null) return null;
+
+        for (int i = 0; i < System.Windows.Media.VisualTreeHelper.GetChildrenCount(obj); i++)
+        {
+            var child = System.Windows.Media.VisualTreeHelper.GetChild(obj, i);
+            if (child is T match) return match;
+
+            var result = FindVisualChild<T>(child);
+            if (result != null) return result;
         }
         return null;
     }
 }
 
-public class RelayCommand : ICommand
+public class ActionCommand : ICommand
 {
-    private readonly Action<object?> _execute;
-    public RelayCommand(Action<object?> execute) => _execute = execute;
+    private readonly Action _execute;
+    public ActionCommand(Action execute) => _execute = execute;
     public bool CanExecute(object? parameter) => true;
-    public void Execute(object? parameter) => _execute(parameter);
+    public void Execute(object? parameter) => _execute();
     public event EventHandler? CanExecuteChanged { add { } remove { } }
 }
