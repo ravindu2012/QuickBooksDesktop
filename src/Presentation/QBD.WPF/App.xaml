@@ -4,6 +4,8 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Themes/LightColors.xaml"/>
+                
                 <ResourceDictionary Source="Themes/ClassicTheme.xaml"/>
                 <ResourceDictionary Source="Themes/DataTemplates.xaml"/>
             </ResourceDictionary.MergedDictionaries>

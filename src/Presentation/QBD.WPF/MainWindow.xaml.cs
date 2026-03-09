@@ -1,3 +1,5 @@
+using System;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using QBD.Application.Interfaces;
@@ -8,19 +10,45 @@ namespace QBD.WPF;
 public partial class MainWindow : Window
 {
     private readonly INavigationService _navigationService;
+    private bool _isDarkMode = false;
+    private string _themeConfigFile = string.Empty;
 
     public MainWindow(INavigationService navigationService, HomePageViewModel homePageViewModel)
     {
         InitializeComponent();
         _navigationService = navigationService;
 
-        // Open Home Page on startup
+        try
+        {
+            var appDataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "QBD", "QBD.WPF");
+            if (!Directory.Exists(appDataDirectory))
+            {
+                Directory.CreateDirectory(appDataDirectory);
+            }
+            
+            _themeConfigFile = Path.Combine(appDataDirectory, "theme.cfg");
+
+            if (File.Exists(_themeConfigFile))
+            {
+                var configContent = File.ReadAllText(_themeConfigFile);
+                if (bool.TryParse(configContent, out bool isDark))
+                {
+                    _isDarkMode = isDark;
+                    var app = (App)System.Windows.Application.Current;
+                    app.ChangeTheme(_isDarkMode);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error reading theme configuration: {ex.Message}");
+        }
+
         OpenTab(homePageViewModel);
     }
 
     public void OpenTab(ViewModelBase viewModel)
     {
-        // Check if tab already exists
         foreach (var item in WorkspaceTabs.Items)
         {
             if (item is ViewModelBase existing && existing.GetType() == viewModel.GetType()
@@ -44,7 +72,6 @@ public partial class MainWindow : Window
         WorkspaceTabs.Items.Clear();
     }
 
-    // Event handlers delegate to navigation service
     private void Exit_Click(object sender, RoutedEventArgs e) => System.Windows.Application.Current.Shutdown();
     private void HomePage_Click(object sender, RoutedEventArgs e) => _navigationService.OpenHomePage();
     private void ChartOfAccounts_Click(object sender, RoutedEventArgs e) => _navigationService.OpenList("ChartOfAccounts");
@@ -101,5 +128,24 @@ public partial class MainWindow : Window
     {
         MessageBox.Show("QuickBooks Desktop Enterprise Clone\nVersion 1.0\n\nA full-featured accounting application.",
             "About", MessageBoxButton.OK, MessageBoxImage.Information);
+    }
+
+    private void ToggleDarkMode_Click(object sender, RoutedEventArgs e)
+    {
+        _isDarkMode = !_isDarkMode;
+        var app = (App)System.Windows.Application.Current;
+        app.ChangeTheme(_isDarkMode);
+
+        try
+        {
+            if (!string.IsNullOrEmpty(_themeConfigFile))
+            {
+                File.WriteAllText(_themeConfigFile, _isDarkMode.ToString());
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error saving theme: {ex.Message}");
+        }
     }
 }

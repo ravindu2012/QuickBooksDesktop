@@ -6,14 +6,17 @@
         Width="1280" Height="800"
         WindowStartupLocation="CenterScreen"
         WindowState="Maximized"
-        Background="#F0F0F0">
+        Background="{DynamicResource ThemeWindowBackground}">
     <Window.Resources>
         <controls:ViewModelTemplateSelector x:Key="ViewModelTemplateSelector"/>
     </Window.Resources>
 
     <DockPanel LastChildFill="True">
         <!-- Menu Bar -->
-        <Menu DockPanel.Dock="Top" Background="#F0F0F0" Padding="2">
+        <Menu DockPanel.Dock="Top" 
+              Background="{DynamicResource ThemeMenuBackground}"
+              Foreground="{DynamicResource ThemeForeground}" 
+              Padding="2">
             <MenuItem Header="_File">
                 <MenuItem Header="New Company..." />
                 <MenuItem Header="Open Company..." />
@@ -30,6 +33,8 @@
             </MenuItem>
             <MenuItem Header="_View">
                 <MenuItem Header="Home Page" Click="HomePage_Click"/>
+                <Separator/>
+                <MenuItem Header="Toggle Dark Mode" Click="ToggleDarkMode_Click"/>
                 <Separator/>
                 <MenuItem Header="Open Window List" />
             </MenuItem>
@@ -120,8 +125,8 @@
         </Menu>
 
         <!-- Icon Toolbar -->
-        <ToolBarTray DockPanel.Dock="Top" Background="#E8E8E8">
-            <ToolBar Band="1" BandIndex="1" Background="#E8E8E8">
+        <ToolBarTray DockPanel.Dock="Top" Background="{DynamicResource ThemeWindowBackground}">
+            <ToolBar Band="1" BandIndex="1" Background="{DynamicResource ThemeWindowBackground}">
                 <Button Click="HomePage_Click" ToolTip="Home Page" Padding="8,4">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="&#x1F3E0;" FontSize="16" VerticalAlignment="Center"/>
@@ -164,7 +169,10 @@
         </ToolBarTray>
 
         <!-- Status Bar -->
-        <StatusBar DockPanel.Dock="Bottom" Background="#E0E0E0" Padding="4,2">
+        <StatusBar DockPanel.Dock="Bottom" 
+                   Background="{DynamicResource ThemeWindowBackground}" 
+                   Foreground="{DynamicResource ThemeForeground}" 
+                   Padding="4,2">
             <StatusBarItem>
                 <TextBlock x:Name="CompanyStatusText" Text="Company: My Company"/>
             </StatusBarItem>
@@ -183,7 +191,8 @@
 
         <!-- MDI Tab Workspace -->
         <TabControl x:Name="WorkspaceTabs"
-                    Background="White"
+                    Background="{DynamicResource ThemeWindowBackground}"
+                    Foreground="{DynamicResource ThemeForeground}"
                     Padding="0"
                     ContentTemplateSelector="{StaticResource ViewModelTemplateSelector}">
             <TabControl.ItemTemplate>
