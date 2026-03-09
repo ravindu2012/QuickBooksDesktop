@@ -111,8 +111,8 @@
                     <Button Content="Search" Command="{Binding FilterCommand}" Padding="8,2" TabIndex="2"/>
                 </StackPanel>
                 <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="8,4">
-                    <Button Content="New" Command="{Binding NewEntityCommand}" Padding="8,2" Margin="0,0,4,0"/>
-                    <Button Content="Edit" Command="{Binding EditEntityCommand}" Padding="8,2"/>
+                    <Button Content="_New" Command="{Binding NewEntityCommand}" Padding="8,2" Margin="0,0,4,0" TabIndex="4"/>
+                    <Button Content="_Edit" Command="{Binding EditEntityCommand}" Padding="8,2" TabIndex="5"/>
                 </StackPanel>
                 <ListBox ItemsSource="{Binding EntityList}"
                          SelectedItem="{Binding SelectedEntity}"
@@ -366,9 +366,10 @@
                         <ComboBoxItem Content="Last Fiscal Year"/>
                         <ComboBoxItem Content="Custom"/>
                     </ComboBox>
+                    
                     <TextBlock Text="From:" VerticalAlignment="Center" Margin="0,0,4,0"/>
-                    <DatePicker SelectedDate="{Binding FromDate}" Width="120" Margin="0,0,8,0" TabIndex="1"/>
-
+                    <DatePicker SelectedDate="{Binding FromDate}" Width="120" Margin="0,0,8,0"/>
+                
                     <TextBlock Text="To:" VerticalAlignment="Center" Margin="0,0,4,0"/>
                     <DatePicker SelectedDate="{Binding ToDate}" Width="120" Margin="0,0,8,0"/>
                     
@@ -377,11 +378,12 @@
                         <ComboBoxItem Content="Accrual"/>
                         <ComboBoxItem Content="Cash"/>
                     </ComboBox>
-                    <Button Content="Run Report" Command="{Binding GenerateReportCommand}"
+                    
+                    <Button Content="_Run Report" Command="{Binding GenerateReportCommand}"
                             Padding="12,4" Background="{DynamicResource ThemePrimary}" Foreground="{DynamicResource ThemePrimaryForeground}" FontWeight="Bold" Margin="0,0,4,0"/>
-                    <Button Content="Export PDF" Command="{Binding ExportToPdfCommand}" Padding="8,4" Margin="0,0,4,0"/>
-                    <Button Content="Export Excel" Command="{Binding ExportToExcelCommand}" Padding="8,4" Margin="0,0,4,0"/>
-                    <Button Content="Print" Command="{Binding PrintCommand}" Padding="8,4"/>
+                    <Button Content="Export _PDF" Command="{Binding ExportToPdfCommand}" Padding="8,4" Margin="0,0,4,0"/>
+                    <Button Content="Export _Excel" Command="{Binding ExportToExcelCommand}" Padding="8,4" Margin="0,0,4,0"/>
+                    <Button Content="_Print" Command="{Binding PrintCommand}" Padding="8,4"/>
                 </StackPanel>
             </Border>
 
