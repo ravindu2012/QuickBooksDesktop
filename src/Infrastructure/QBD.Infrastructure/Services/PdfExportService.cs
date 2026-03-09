@@ -13,15 +13,14 @@ namespace QBD.Infrastructure.Services
 {
     public class PdfExportService : IPdfExportService
     {
-        public PdfExportService()
+        static PdfExportService()
         {
             QuestPDF.Settings.License = LicenseType.Community;
         }
 
-        public async Task ExportInvoiceToPdfAsync(object invoiceData, string filePath)
+        public async Task ExportInvoiceToPdfAsync(Invoice invoice, string filePath)
         {
-            if (invoiceData is not Invoice invoice)
-                throw new ArgumentException("Podatki niso veljavni Invoice objekti.");
+            ArgumentNullException.ThrowIfNull(invoice);
 
             await Task.Run(() =>
             {
