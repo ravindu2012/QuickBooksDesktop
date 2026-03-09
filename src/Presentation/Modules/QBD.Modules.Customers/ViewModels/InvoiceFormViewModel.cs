@@ -7,6 +7,7 @@ using QBD.Domain.Entities.Accounting;
 using QBD.Domain.Entities.Customers;
 using QBD.Domain.Entities.Items;
 using QBD.Domain.Enums;
+using CommunityToolkit.Mvvm.Input;
 
 namespace QBD.Modules.Customers.ViewModels;
 
@@ -17,6 +18,7 @@ public partial class InvoiceFormViewModel : TransactionFormViewModelBase<Invoice
     private readonly IRepository<Item> _itemRepository;
     private readonly IRepository<Terms> _termsRepository;
     private readonly INumberSequenceService _numberSequenceService;
+    private readonly IPdfExportService _pdfExportService;
 
     [ObservableProperty] private ObservableCollection<Customer> _customers = new();
     [ObservableProperty] private ObservableCollection<Item> _items = new();
@@ -32,13 +34,15 @@ public partial class InvoiceFormViewModel : TransactionFormViewModelBase<Invoice
         IRepository<Customer> customerRepository,
         IRepository<Item> itemRepository,
         IRepository<Terms> termsRepository,
-        INumberSequenceService numberSequenceService) : base(unitOfWork, postingService, navigationService)
+        INumberSequenceService numberSequenceService,
+        IPdfExportService pdfExportService) : base(unitOfWork, postingService, navigationService)
     {
         _invoiceRepository = invoiceRepository;
         _customerRepository = customerRepository;
         _itemRepository = itemRepository;
         _termsRepository = termsRepository;
         _numberSequenceService = numberSequenceService;
+        _pdfExportService = pdfExportService;
         Title = "Create Invoice";
     }
 
@@ -139,5 +143,36 @@ public partial class InvoiceFormViewModel : TransactionFormViewModelBase<Invoice
             SetStatus($"Invoice {Header.InvoiceNumber} voided.");
         }
         catch (Exception ex) { SetError(ex.Message); }
+    }
+
+    [RelayCommand]
+    private async Task ExportToPdfAsync()
+    {
+        if (Header == null) return;
+
+        var dialog = new Microsoft.Win32.SaveFileDialog
+        {
+            FileName = $"Invoice_{Header.InvoiceNumber ?? "New"}.pdf",
+            DefaultExt = ".pdf",
+            Filter = "PDF Documents (.pdf)|*.pdf"
+        };
+
+        if (dialog.ShowDialog() == true)
+        {
+            IsBusy = true;
+            try
+            {
+                await _pdfExportService.ExportInvoiceToPdfAsync(Header, dialog.FileName);
+                SetStatus($"Invoice exported successfully to {dialog.FileName}");
+            }
+            catch (Exception ex) 
+            { 
+                SetError($"Export failed: {ex.Message}"); 
+            }
+            finally 
+            { 
+                IsBusy = false; 
+            }
+        }
     }
 }
