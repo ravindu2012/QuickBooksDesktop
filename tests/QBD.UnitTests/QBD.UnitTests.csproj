@@ -1,10 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,6 +14,7 @@
     <PackageReference Include="Moq" Version="4.20.72" />
     <PackageReference Include="xunit" Version="2.9.3" />
     <PackageReference Include="xunit.runner.visualstudio" Version="3.1.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.2" />
   </ItemGroup>
 
   <ItemGroup>
@@ -21,6 +23,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Core\QBD.Application\QBD.Application.csproj" />
+    <ProjectReference Include="..\..\src\Core\QBD.Domain\QBD.Domain.csproj" />
+    <ProjectReference Include="..\..\src\Infrastructure\QBD.Infrastructure\QBD.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

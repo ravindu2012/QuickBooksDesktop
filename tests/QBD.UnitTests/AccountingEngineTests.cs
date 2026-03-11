@@ -1,36 +1,54 @@
-﻿using Xunit;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using QBD.Domain.Entities.Accounting;
-using QBD.Application.Interfaces;
-using Moq;
+using QBD.Domain.Entities.Customers;
+using QBD.Domain.Entities.Vendors;
+using QBD.Domain.Entities.Items;
 using QBD.Domain.Enums;
+using QBD.Infrastructure.Data;
+using QBD.Infrastructure.Services;
 
 namespace QBD.UnitTests;
 
 public class AccountingEngineTests
 {
+    private async Task<QBDesktopDbContext> GetInMemoryDbContextAsync()
+    {
+        var options = new DbContextOptionsBuilder<QBDesktopDbContext>()
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+            .Options;
+
+        var context = new QBDesktopDbContext(options);
+        await context.Database.EnsureCreatedAsync();
+        return context;
+    }
+
     [Fact]
     public void JournalEntry_ShouldBeBalanced_WhenDebitsEqualsCredits()
     {
-        // arrange: create lines where the sum of Debits equals the sum of Credits
+        // arrange: create a mock journal entry with equal debit and credit amounts
         var lines = new List<JournalEntryLine>
         {
             new JournalEntryLine { DebitAmount = 100.00m, CreditAmount = 0 },
             new JournalEntryLine { DebitAmount = 0, CreditAmount = 100.00m }
         };
 
-        // act: calculate the totals
+        // act: calculate the difference between total debits and credits
         var totalDebits = lines.Sum(l => l.DebitAmount);
         var totalCredits = lines.Sum(l => l.CreditAmount);
         var balance = totalDebits - totalCredits;
 
-        // assert: verify the balance is zero
+        // assert: the balance should be exactly zero
         Assert.Equal(0, balance);
     }
 
     [Fact]
     public void JournalEntry_ShouldBeUnbalanced_WhenDebitsDoNotEqualCredits()
     {
-        // arrange: prepare unbalanced data (100.00 vs 80.00)
+        // arrange: create a mock journal entry with unequal amounts (100 vs 80)
         var lines = new List<JournalEntryLine>
         {
             new JournalEntryLine { DebitAmount = 100.00m, CreditAmount = 0 },
@@ -42,107 +60,194 @@ public class AccountingEngineTests
         var totalCredits = lines.Sum(l => l.CreditAmount);
         var balance = totalDebits - totalCredits;
 
-        // assert: verify the balance is not zero
+        // assert: the balance should NOT be zero
         Assert.NotEqual(0, balance);
+    }
+
+    [Fact]
+    public async Task ValidateBalanceAsync_ShouldReturnTrue_WhenBalanced()
+    {
+        // arrange: setup DB with balanced General Ledger (GL) entries
+        var context = await GetInMemoryDbContextAsync();
+        var service = new TransactionPostingService(context);
+
+        context.GLEntries.AddRange(
+            new GLEntry { DebitAmount = 100, CreditAmount = 0, TransactionType = TransactionType.JournalEntry },
+            new GLEntry { DebitAmount = 0, CreditAmount = 100, TransactionType = TransactionType.JournalEntry }
+        );
+        await context.SaveChangesAsync();
+
+        // act: execute the balance validation logic
+        var result = await service.ValidateBalanceAsync();
+
+        // assert: the service should confirm the ledger is balanced
+        Assert.True(result);
     }
 
     [Fact]
     public async Task PostTransaction_ShouldThrowException_WhenUnbalanced()
     {
-        // arrange: create a mock of the actual service from your interface
-        var mockService = new Mock<ITransactionPostingService>();
+        // arrange: setup DB and create an unbalanced entry
+        var context = await GetInMemoryDbContextAsync();
+        var service = new TransactionPostingService(context);
+
+        var je = new JournalEntry 
+        { 
+            Id = 1,
+            EntryNumber = "JE-001",
+            PostingDate = DateTime.Now,
+            Lines = new List<JournalEntryLine> 
+            {
+                new JournalEntryLine { DebitAmount = 100, CreditAmount = 0 },
+                new JournalEntryLine { DebitAmount = 0, CreditAmount = 50 }
+            }
+        };
+        context.JournalEntries.Add(je);
+        await context.SaveChangesAsync();
+
+        // act & assert: attempting to post should throw an InvalidOperationException
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => 
+            service.PostTransactionAsync(TransactionType.JournalEntry, 1));
+            
+        Assert.Contains("Unbalanced entry", exception.Message);
+    }
+
+    [Fact]
+    public async Task PostTransaction_ShouldCreateGLEntries_WhenBalanced()
+    {
+        // arrange: setup DB with required dummy accounts to prevent "not found" errors
+        var context = await GetInMemoryDbContextAsync();
+        var service = new TransactionPostingService(context);
+
+        context.Accounts.Add(new Account { Id = 1, Name = "Bank", AccountType = AccountType.Bank, IsDebitNormal = true });
+        context.Accounts.Add(new Account { Id = 2, Name = "Income", AccountType = AccountType.Income, IsDebitNormal = false });
         
-        var type = QBD.Domain.Enums.TransactionType.JournalEntry;
-        int fakeId = 1;
+        var je = new JournalEntry 
+        { 
+            Id = 2,
+            EntryNumber = "JE-002",
+            PostingDate = DateTime.Now,
+            Lines = new List<JournalEntryLine> 
+            {
+                new JournalEntryLine { AccountId = 1, DebitAmount = 100, CreditAmount = 0 },
+                new JournalEntryLine { AccountId = 2, DebitAmount = 0, CreditAmount = 100 } 
+            }
+        };
+        context.JournalEntries.Add(je);
+        await context.SaveChangesAsync();
 
-        // setup the mock to mimic the validation logic
-        mockService.Setup(s => s.PostTransactionAsync(type, fakeId))
-                   .ThrowsAsync(new InvalidOperationException("Unbalanced entry."));
+        // act: post the valid transaction
+        await service.PostTransactionAsync(TransactionType.JournalEntry, 2);
 
-        // 2. act & 3. assert: verify the engine rejects the call
-        await Assert.ThrowsAsync<InvalidOperationException>(() => 
-            mockService.Object.PostTransactionAsync(type, fakeId));
+        // assert: verify that exactly 2 GL entries were saved to the database
+        var entries = await context.GLEntries.Where(e => e.TransactionId == 2).ToListAsync();
+        Assert.Equal(2, entries.Count);
+        Assert.Equal(100m, entries.Sum(e => e.DebitAmount));
+        Assert.Equal(100m, entries.Sum(e => e.CreditAmount));
     }
 
     [Fact]
-    public async Task PostInvoice_ShouldCreateBalancedGeneralLedgerEntries()
+    public async Task VoidTransaction_ShouldReverseEntriesCorrectly()
     {
-        // arrange: setup the mock for the posting service
-        var mockService = new Mock<ITransactionPostingService>();
-        var type = QBD.Domain.Enums.TransactionType.Invoice;
-        int fakeInvoiceId = 500;
+        // arrange: setup DB with an existing GL entry that needs to be voided
+        var context = await GetInMemoryDbContextAsync();
+        var service = new TransactionPostingService(context);
 
-        // setup the mock to simulate a successful balanced posting
-        mockService.Setup(s => s.PostTransactionAsync(type, fakeInvoiceId))
-                   .Returns(Task.CompletedTask);
+        context.Accounts.Add(new Account { Id = 1, Name = "Bank", AccountType = AccountType.Bank, IsDebitNormal = true, Balance = 100 });
+        
+        context.GLEntries.Add(new GLEntry 
+        { 
+            TransactionType = TransactionType.JournalEntry, 
+            TransactionId = 99, 
+            AccountId = 1, 
+            DebitAmount = 100, 
+            CreditAmount = 0,
+            IsVoid = false
+        });
+        await context.SaveChangesAsync();
 
-        // act: execute the posting
-        await mockService.Object.PostTransactionAsync(type, fakeInvoiceId);
+        // act: trigger the void process
+        await service.VoidTransactionAsync(TransactionType.JournalEntry, 99);
 
-        // assert: verify the method was called exactly once with correct parameters
-        mockService.Verify(s => s.PostTransactionAsync(type, fakeInvoiceId), Times.Once());
+        // assert: verify the original is marked void and a reversal entry was generated
+        var allEntries = await context.GLEntries.Where(e => e.TransactionId == 99).ToListAsync();
+        
+        Assert.Equal(2, allEntries.Count); 
+        Assert.True(allEntries.First(e => e.DebitAmount == 100).IsVoid);
+        Assert.Contains(allEntries, e => e.CreditAmount == 100 && e.IsVoid); 
     }
 
     [Fact]
-    public async Task PostInvoice_ShouldGenerateCorrectDebitEntry()
+    public async Task PostInvoice_ShouldCreateCorrectGLEntries()
     {
-        // arrange: setup mocks for posting service and a fake repository
-        var mockService = new Mock<ITransactionPostingService>();
-        var type = QBD.Domain.Enums.TransactionType.Invoice;
-        int invoiceId = 101;
+        // arrange: setup Accounts, Customer, Item, and Invoice in the real DB
+        var context = await GetInMemoryDbContextAsync();
+        var service = new TransactionPostingService(context);
 
-        mockService.Setup(s => s.PostTransactionAsync(type, invoiceId))
-                   .Returns(Task.CompletedTask);
+        // system accounts needed for invoices
+        context.Accounts.Add(new Account { Id = 10, Name = "Accounts Receivable", AccountType = AccountType.AccountsReceivable, IsSystemAccount = true, IsDebitNormal = true });
+        context.Accounts.Add(new Account { Id = 20, Name = "Sales Income", AccountType = AccountType.Income, IsSystemAccount = true, IsDebitNormal = false });
+        
+        var customer = new Customer { Id = 1, CustomerName = "Test Client" };
+        var item = new Item { Id = 1, IncomeAccountId = 20 };
+        context.Customers.Add(customer);
+        context.Items.Add(item);
 
-        // act: execute the posting logic
-        await mockService.Object.PostTransactionAsync(type, invoiceId);
+        var invoice = new Invoice
+        {
+            Id = 500,
+            InvoiceNumber = "INV-001",
+            Date = DateTime.Now,
+            CustomerId = 1,
+            Total = 150m,
+            Lines = new List<InvoiceLine> { new InvoiceLine { ItemId = 1, Amount = 150m, Item = item } }
+        };
+        context.Invoices.Add(invoice);
+        await context.SaveChangesAsync();
 
-        // assert: verify the posting was triggered for this specific invoice
-        mockService.Verify(s => s.PostTransactionAsync(
-            It.Is<QBD.Domain.Enums.TransactionType>(t => t == type),
-            It.Is<int>(id => id == invoiceId)
-        ), Times.Once());
+        // act: post the invoice
+        await service.PostTransactionAsync(TransactionType.Invoice, 500);
+
+        // assert: verify AR is debited and Income is credited
+        var entries = await context.GLEntries.Where(e => e.TransactionId == 500 && e.TransactionType == TransactionType.Invoice).ToListAsync();
+        Assert.Equal(2, entries.Count);
+        Assert.Contains(entries, e => e.AccountId == 10 && e.DebitAmount == 150m); 
+        Assert.Contains(entries, e => e.AccountId == 20 && e.CreditAmount == 150m); 
     }
 
     [Fact]
     public async Task PostBillPayment_ShouldTriggerCorrectTransactionType()
     {
-        // arrange: setup mock for the posting service
-        var mockService = new Mock<ITransactionPostingService>();
-        var type = QBD.Domain.Enums.TransactionType.BillPayment;
-        int billId = 202;
+        // arrange: setup AP, Bank, Vendor, Bill, and BillPayment
+        var context = await GetInMemoryDbContextAsync();
+        var service = new TransactionPostingService(context);
 
-        mockService.Setup(s => s.PostTransactionAsync(type, billId))
-                   .Returns(Task.CompletedTask);
+        context.Accounts.Add(new Account { Id = 30, Name = "Accounts Payable", AccountType = AccountType.AccountsPayable, IsSystemAccount = true, IsDebitNormal = false });
+        context.Accounts.Add(new Account { Id = 40, Name = "Checking", AccountType = AccountType.Bank, IsSystemAccount = true, IsDebitNormal = true });
 
-        // act: execute the payment posting
-        await mockService.Object.PostTransactionAsync(type, billId);
+        var vendor = new Vendor { Id = 1, VendorName = "Office Supplies Co." };
+        var bill = new Bill { Id = 100, VendorId = 1, AmountDue = 200m, Vendor = vendor };
+        context.Vendors.Add(vendor);
+        context.Bills.Add(bill);
 
-        // assert: verify that the service was called with BillPayment type
-        mockService.Verify(s => s.PostTransactionAsync(
-            It.Is<QBD.Domain.Enums.TransactionType>(t => t == QBD.Domain.Enums.TransactionType.BillPayment),
-            It.Is<int>(id => id == billId)
-        ), Times.Once());
-    }
+        var payment = new BillPayment
+        {
+            Id = 202,
+            Date = DateTime.Now,
+            PaymentAccountId = 40,
+            Amount = 200m,
+            Applications = new List<BillPaymentApplication> { new BillPaymentApplication { BillId = 100, AmountApplied = 200m, Bill = bill } }
+        };
+        context.BillPayments.Add(payment);
+        await context.SaveChangesAsync();
 
-    [Fact]
-    public async Task VoidTransaction_ShouldCallServiceWithCorrectParameters()
-    {
-        // arrange: setup mock for the posting service
-        var mockService = new Mock<ITransactionPostingService>();
-        var type = TransactionType.JournalEntry;
-        int transactionId = 999;
+        // act: post the bill payment
+        await service.PostTransactionAsync(TransactionType.BillPayment, 202);
 
-        mockService.Setup(s => s.VoidTransactionAsync(type, transactionId))
-                   .Returns(Task.CompletedTask);
-
-        // act: execute the voiding logic
-        await mockService.Object.VoidTransactionAsync(type, transactionId);
-
-        // assert: verify the service was called once for this specific transaction
-        mockService.Verify(s => s.VoidTransactionAsync(
-            It.Is<TransactionType>(t => t == type),
-            It.Is<int>(id => id == transactionId)
-        ), Times.Once());
+        // assert: verify AP is debited (reduced) and Bank is credited (reduced)
+        var entries = await context.GLEntries.Where(e => e.TransactionId == 202 && e.TransactionType == TransactionType.BillPayment).ToListAsync();
+        Assert.Equal(2, entries.Count);
+        Assert.Contains(entries, e => e.AccountId == 30 && e.DebitAmount == 200m);
+        Assert.Contains(entries, e => e.AccountId == 40 && e.CreditAmount == 200m); 
     }
 }
