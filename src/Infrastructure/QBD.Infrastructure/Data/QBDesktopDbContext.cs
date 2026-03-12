@@ -1,3 +1,6 @@
+// Copyright (c) 2026, Ravindu Gajanayaka
+// Licensed under GPLv3. See LICENSE
+
 using Microsoft.EntityFrameworkCore;
 using QBD.Domain.Common;
 using QBD.Domain.Entities.Accounting;

@@ -1,3 +1,6 @@
+// Copyright (c) 2026, Ravindu Gajanayaka
+// Licensed under GPLv3. See LICENSE
+
 using Microsoft.EntityFrameworkCore.Storage;
 using QBD.Application.Interfaces;
 using QBD.Infrastructure.Data;

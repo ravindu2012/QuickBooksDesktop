@@ -1,3 +1,6 @@
+// Copyright (c) 2026, Ravindu Gajanayaka
+// Licensed under GPLv3. See LICENSE
+
 using System.Collections.ObjectModel;
 using Microsoft.EntityFrameworkCore;
 using QBD.Application.Interfaces;
