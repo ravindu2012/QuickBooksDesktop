@@ -107,8 +107,8 @@
             <DockPanel Grid.Column="0" Background="{DynamicResource ThemeControlBackground}">
                 <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="8">
                     <TextBox Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}"
-                             Width="160" Margin="0,0,4,0" VerticalContentAlignment="Center"/>
-                    <Button Content="Search" Command="{Binding FilterCommand}" Padding="8,2"/>
+                             Width="160" Margin="0,0,4,0" VerticalContentAlignment="Center" TabIndex="1"/>
+                    <Button Content="Search" Command="{Binding FilterCommand}" Padding="8,2" TabIndex="2"/>
                 </StackPanel>
                 <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="8,4">
                     <Button Content="New" Command="{Binding NewEntityCommand}" Padding="8,2" Margin="0,0,4,0"/>
@@ -119,7 +119,7 @@
                          DisplayMemberPath="DisplayName"
                          Background="{DynamicResource ThemeControlBackground}"
                          Foreground="{DynamicResource ThemeForeground}"
-                         Margin="4" BorderThickness="1" BorderBrush="{DynamicResource ThemeBorderBrush}"/>
+                         Margin="4" BorderThickness="1" BorderBrush="{DynamicResource ThemeBorderBrush}" TabIndex="3"/>
             </DockPanel>
 
             <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" Background="{DynamicResource ThemeBorderBrush}"/>
@@ -189,13 +189,22 @@
                     </Grid.ColumnDefinitions>
 
                     <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
-                        <Button Content="Save" Command="{Binding SaveCommand}" Padding="16,6" Margin="0,0,8,0"
+                        <Button Content="_Save" TabIndex="1"
+                                Command="{Binding SaveCommand}" Padding="16,6" Margin="0,0,8,0"
                                 Background="{DynamicResource ThemePrimary}" Foreground="{DynamicResource ThemePrimaryForeground}" FontWeight="Bold"/>
-                        <Button Content="Save &amp; Post" Command="{Binding SaveAndPostCommand}" Padding="16,6" Margin="0,0,8,0"/>
-                        <Button Content="Clear" Command="{Binding ClearCommand}" Padding="16,6" Margin="0,0,8,0"/>
-                        <Button Content="Void" Command="{Binding VoidCommand}" Padding="16,6" Margin="0,0,8,0"
+
+                        <Button Content="Save &amp; _Post" TabIndex="2"
+                                Command="{Binding SaveAndPostCommand}" Padding="16,6" Margin="0,0,8,0"/>
+
+                        <Button Content="C_lear" TabIndex="3"
+                                Command="{Binding ClearCommand}" Padding="16,6" Margin="0,0,8,0"/>
+
+                        <Button Content="_Void" TabIndex="4"
+                                Command="{Binding VoidCommand}" Padding="16,6" Margin="0,0,8,0"
                                 Foreground="{DynamicResource ThemeDangerForeground}"/>
-                        <Button Content="Print" Command="{Binding PrintCommand}" Padding="16,6"/>
+
+                        <Button Content="P_rint" TabIndex="5"
+                                Command="{Binding PrintCommand}" Padding="16,6"/>
                     </StackPanel>
 
                     <StackPanel Grid.Column="1" HorizontalAlignment="Right" MinWidth="200">
@@ -241,11 +250,14 @@
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="Account: " FontWeight="Bold" VerticalAlignment="Center"/>
                     <TextBlock Text="{Binding AccountName}" FontWeight="Bold" FontSize="14" VerticalAlignment="Center" Margin="0,0,16,0"/>
+
                     <TextBlock Text="From:" VerticalAlignment="Center" Margin="0,0,4,0"/>
-                    <DatePicker SelectedDate="{Binding FromDate}" Width="120" Margin="0,0,8,0"/>
+                    <DatePicker SelectedDate="{Binding FromDate}" Width="120" Margin="0,0,8,0" TabIndex="1"/>
+
                     <TextBlock Text="To:" VerticalAlignment="Center" Margin="0,0,4,0"/>
-                    <DatePicker SelectedDate="{Binding ToDate}" Width="120" Margin="0,0,8,0"/>
-                    <Button Content="Refresh" Command="{Binding LoadEntriesCommand}" Padding="8,2"/>
+                    <DatePicker SelectedDate="{Binding ToDate}" Width="120" Margin="0,0,8,0" TabIndex="2"/>
+
+                    <Button Content="_Refresh" Command="{Binding LoadEntriesCommand}" Padding="8,2" TabIndex="3"/>
                 </StackPanel>
             </Border>
 
@@ -300,14 +312,19 @@
         <DockPanel Margin="8" Background="{DynamicResource ThemeWindowBackground}">
             <Border DockPanel.Dock="Top" Background="{DynamicResource ThemeControlBackground}" BorderBrush="{DynamicResource ThemeBorderBrush}" BorderThickness="1" Padding="8" Margin="0,0,0,8">
                 <StackPanel Orientation="Horizontal">
-                    <Button Content="New" Command="{Binding NewItemCommand}" Padding="8,2" Margin="0,0,4,0"/>
-                    <Button Content="Edit" Command="{Binding EditItemCommand}"
-                            CommandParameter="{Binding SelectedItem}" Padding="8,2" Margin="0,0,4,0"/>
-                    <Button Content="Delete" Command="{Binding DeleteItemCommand}"
-                            CommandParameter="{Binding SelectedItem}" Padding="8,2" Margin="0,0,16,0" Foreground="{DynamicResource ThemeDangerForeground}"/>
+                    <Button Content="_New" Command="{Binding NewItemCommand}" Padding="8,2" Margin="0,0,4,0" TabIndex="2"/>
+
+                    <Button Content="_Edit" Command="{Binding EditItemCommand}"
+                            CommandParameter="{Binding SelectedItem}" Padding="8,2" Margin="0,0,4,0" TabIndex="3"/>
+
+                    <Button Content="_Delete" Command="{Binding DeleteItemCommand}"
+                            CommandParameter="{Binding SelectedItem}" Padding="8,2" Margin="0,0,16,0" 
+                            Foreground="{DynamicResource ThemeDangerForeground}" TabIndex="4"/>
+
                     <TextBox Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" Width="200" Margin="0,0,4,0"
-                             VerticalContentAlignment="Center"/>
-                    <Button Content="Search" Command="{Binding SearchCommand}" Padding="8,2"/>
+                             VerticalContentAlignment="Center" TabIndex="1"/>
+
+                    <Button Content="_Search" Command="{Binding SearchCommand}" Padding="8,2" TabIndex="5"/>
                 </StackPanel>
             </Border>
 
@@ -350,9 +367,11 @@
                         <ComboBoxItem Content="Custom"/>
                     </ComboBox>
                     <TextBlock Text="From:" VerticalAlignment="Center" Margin="0,0,4,0"/>
-                    <DatePicker SelectedDate="{Binding FromDate}" Width="120" Margin="0,0,8,0"/>
+                    <DatePicker SelectedDate="{Binding FromDate}" Width="120" Margin="0,0,8,0" TabIndex="1"/>
+
                     <TextBlock Text="To:" VerticalAlignment="Center" Margin="0,0,4,0"/>
                     <DatePicker SelectedDate="{Binding ToDate}" Width="120" Margin="0,0,8,0"/>
+                    
                     <TextBlock Text="Basis:" VerticalAlignment="Center" Margin="0,0,4,0"/>
                     <ComboBox Width="100" SelectedItem="{Binding ReportBasis}" Margin="0,0,8,0">
                         <ComboBoxItem Content="Accrual"/>
