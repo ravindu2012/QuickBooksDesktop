@@ -8,6 +8,7 @@
     <Project Path="src/Infrastructure/QBD.Infrastructure/QBD.Infrastructure.csproj" />
   </Folder>
   <Folder Name="/src/Presentation/">
+    <Project Path="src/Presentation/QBD.API/QBD.API.csproj" />
     <Project Path="src/Presentation/QBD.WPF/QBD.WPF.csproj" />
   </Folder>
   <Folder Name="/src/Presentation/Modules/">

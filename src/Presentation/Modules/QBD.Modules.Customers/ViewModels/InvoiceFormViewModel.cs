@@ -1,3 +1,6 @@
+// Copyright (c) 2026, Ravindu Gajanayaka
+// Licensed under GPLv3. See LICENSE
+
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.EntityFrameworkCore;
@@ -7,6 +10,7 @@ using QBD.Domain.Entities.Accounting;
 using QBD.Domain.Entities.Customers;
 using QBD.Domain.Entities.Items;
 using QBD.Domain.Enums;
+using CommunityToolkit.Mvvm.Input;
 
 namespace QBD.Modules.Customers.ViewModels;
 
@@ -17,6 +21,8 @@ public partial class InvoiceFormViewModel : TransactionFormViewModelBase<Invoice
     private readonly IRepository<Item> _itemRepository;
     private readonly IRepository<Terms> _termsRepository;
     private readonly INumberSequenceService _numberSequenceService;
+    private readonly IPdfExportService _pdfExportService;
+    private readonly IFileDialogService _fileDialogService;
 
     [ObservableProperty] private ObservableCollection<Customer> _customers = new();
     [ObservableProperty] private ObservableCollection<Item> _items = new();
@@ -32,13 +38,17 @@ public partial class InvoiceFormViewModel : TransactionFormViewModelBase<Invoice
         IRepository<Customer> customerRepository,
         IRepository<Item> itemRepository,
         IRepository<Terms> termsRepository,
-        INumberSequenceService numberSequenceService) : base(unitOfWork, postingService, navigationService)
+        INumberSequenceService numberSequenceService,
+        IPdfExportService pdfExportService,
+        IFileDialogService fileDialogService) : base(unitOfWork, postingService, navigationService)
     {
         _invoiceRepository = invoiceRepository;
         _customerRepository = customerRepository;
         _itemRepository = itemRepository;
         _termsRepository = termsRepository;
         _numberSequenceService = numberSequenceService;
+        _pdfExportService = pdfExportService;
+        _fileDialogService = fileDialogService;
         Title = "Create Invoice";
     }
 
@@ -62,6 +72,7 @@ public partial class InvoiceFormViewModel : TransactionFormViewModelBase<Invoice
     {
         if (value != null)
         {
+            Header.Customer = value;
             Header.CustomerId = value.Id;
             Header.BillToAddress = value.BillToAddress;
             if (value.TermsId.HasValue)
@@ -139,5 +150,36 @@ public partial class InvoiceFormViewModel : TransactionFormViewModelBase<Invoice
             SetStatus($"Invoice {Header.InvoiceNumber} voided.");
         }
         catch (Exception ex) { SetError(ex.Message); }
+    }
+
+    [RelayCommand]
+    private async Task ExportToPdfAsync()
+    {
+        if (Header == null) return;
+
+        var filePath = _fileDialogService.ShowSaveFileDialog(
+            $"Invoice_{Header.InvoiceNumber ?? "New"}.pdf",
+            ".pdf",
+            "PDF Documents (.pdf)|*.pdf");
+
+        if (filePath != null)
+        {
+            IsBusy = true;
+            try
+            {
+                Header.Lines = Lines.Where(l => l.Amount != 0).ToList();
+                RecalculateTotals();
+                await _pdfExportService.ExportInvoiceToPdfAsync(Header, filePath);
+                SetStatus($"Invoice exported to {filePath}");
+            }
+            catch (Exception ex)
+            {
+                SetError($"Export failed: {ex.Message}");
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
     }
 }

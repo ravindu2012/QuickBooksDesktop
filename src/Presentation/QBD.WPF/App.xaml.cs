@@ -1,3 +1,6 @@
+// Copyright (c) 2026, Ravindu Gajanayaka
+// Licensed under GPLv3. See LICENSE
+
 using System.Windows;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -33,6 +36,8 @@ public partial class App : System.Windows.Application
                 services.AddScoped<ITransactionPostingService, TransactionPostingService>();
                 services.AddScoped<INumberSequenceService, NumberSequenceService>();
                 services.AddScoped<IAuditService, AuditService>();
+                services.AddTransient<IPdfExportService, PdfExportService>();
+                services.AddSingleton<IFileDialogService, WpfFileDialogService>();
 
                 // Navigation
                 services.AddSingleton<NavigationService>();
